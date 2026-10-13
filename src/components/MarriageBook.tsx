@@ -70,7 +70,7 @@ function Corner({ className }: { className: string }) {
 
 function Page({ person }: { person: typeof site.marriageBook.left }) {
   return (
-    <article className="flex flex-col items-center gap-4 p-6 text-center sm:p-8">
+    <article className="flex flex-col items-center gap-4 px-6 pb-6 pt-7 text-center sm:px-8 sm:pb-8 sm:pt-9">
       <p className="text-[0.7rem] uppercase tracking-[0.35em] text-accent">
         {person.label}
       </p>
@@ -98,31 +98,12 @@ function Page({ person }: { person: typeof site.marriageBook.left }) {
         {person.name}
       </h3>
 
-      {/* Data yang boleh ditampilkan (tidak ada data karangan). */}
-      <dl className="w-full max-w-[16rem] space-y-1 text-sm">
-        <div className="flex justify-between gap-3 border-b border-border/70 pb-1">
-          <dt className="text-foreground/60">Nama</dt>
-          <dd className="text-right font-medium text-foreground/90">
-            {person.name}
-          </dd>
-        </div>
-        {person.birthPlaceDate ? (
-          <div className="flex justify-between gap-3 border-b border-border/70 pb-1">
-            <dt className="text-foreground/60">Lahir</dt>
-            <dd className="text-right font-medium text-foreground/90">
-              {person.birthPlaceDate}
-            </dd>
-          </div>
-        ) : null}
-        {person.nickname ? (
-          <div className="flex justify-between gap-3 border-b border-border/70 pb-1">
-            <dt className="text-foreground/60">Panggilan</dt>
-            <dd className="text-right font-medium text-foreground/90">
-              {person.nickname}
-            </dd>
-          </div>
-        ) : null}
-      </dl>
+      {/* Tempat & tanggal lahir — tanpa label, tampil tenang di tengah. */}
+      {person.birthPlaceDate ? (
+        <p className="text-sm italic text-foreground/70">
+          {person.birthPlaceDate}
+        </p>
+      ) : null}
     </article>
   );
 }
@@ -174,15 +155,6 @@ export default function MarriageBook() {
               <span
                 aria-hidden="true"
                 className="absolute left-1/2 top-0 hidden h-full w-px bg-gradient-to-b from-transparent via-[#c9a24b]/50 to-transparent md:block"
-              />
-
-              {/* Pita pembatas buku (ribbon) di tengah bawah */}
-              <span
-                aria-hidden="true"
-                className="absolute bottom-0 left-1/2 z-30 h-10 w-4 -translate-x-1/2 bg-primary/85 shadow-sm"
-                style={{
-                  clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%)",
-                }}
               />
             </div>
 
@@ -236,6 +208,16 @@ export default function MarriageBook() {
                 Ketuk untuk membuka
               </span>
             </motion.button>
+
+            {/* Pita pembatas buku — menggantung dari tepi atas, di area padding
+                halaman, jadi tidak menimpa teks/foto di lebar layar mana pun. */}
+            <span
+              aria-hidden="true"
+              className="absolute left-1/2 top-0 z-30 h-6 w-3.5 -translate-x-1/2 bg-primary/85 shadow-sm"
+              style={{
+                clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%)",
+              }}
+            />
           </div>
         </div>
       </SectionReveal>

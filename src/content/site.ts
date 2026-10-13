@@ -31,7 +31,7 @@ export type BookPerson = {
   name: string;
   photo: string; // lokasi file di /public
   photoAlt: string;
-  // TODO (opsional): isi tempat/tanggal lahir kalau mau. JANGAN dikarang.
+  // Tempat & tanggal lahir (ditampilkan tanpa label di bawah nama).
   birthPlaceDate?: string;
   // TODO (opsional): isi julukan/panggilan sayang kalau mau. JANGAN dikarang.
   nickname?: string;
@@ -131,16 +131,16 @@ export const site: SiteContent = {
       name: "FIKA ARISTIA PRATAMA",
       photo: "/photos/fika.jpg",
       photoAlt: "Foto Fika Aristia Pratama",
-      // birthPlaceDate: "", // TODO: isi kalau mau (jangan dikarang)
-      // nickname: "",        // TODO: isi kalau mau (jangan dikarang)
+      birthPlaceDate: "Batang, 2 Juni 2008",
+      // nickname: "", // TODO (opsional): isi julukan kalau mau (jangan dikarang)
     },
     right: {
       label: "Yang Mencintai",
       name: "GRESHYA FHAREL IBRAHIM",
       photo: "/photos/greshya.jpg",
       photoAlt: "Foto Greshya Fharel Ibrahim",
-      // birthPlaceDate: "", // TODO: isi kalau mau (jangan dikarang)
-      // nickname: "",        // TODO: isi kalau mau (jangan dikarang)
+      birthPlaceDate: "Demak, 6 Desember 2006",
+      // nickname: "", // TODO (opsional): isi julukan kalau mau (jangan dikarang)
     },
   },
 
