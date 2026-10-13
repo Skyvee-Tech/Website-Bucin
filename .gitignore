@@ -45,3 +45,6 @@ next-env.d.ts
 
 # skill UI/UX dari uipro — alat bantu lokal, tidak perlu di-commit
 /.opencode/
+
+# foto mentah — jangan ikut ke GitHub (hanya hasil optimasi di public/photos/)
+/raw-photos/

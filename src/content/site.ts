@@ -5,11 +5,11 @@
 // komponen. Setelah diubah, jalankan ulang `npm run build`.
 //
 // Catatan soal FOTO & MUSIK:
-// - Taruh file foto di folder  public/photos/  (contoh: kita-1.jpg)
-// - Taruh file musik di folder public/music/  (contoh: lagu.mp3, WAJIB mp3)
+// - Foto mentah taruh di raw-photos/, lalu jalankan `npm run photos`
+//   (lihat scripts/optimize-photos.mjs). Hasilnya muncul di public/photos/.
+// - File musik di public/music/ (contoh: lagu.mp3, WAJIB mp3)
 // - Tulis path-nya di sini DIAWALI "/" tanpa "/public".
-//   Contoh file public/photos/kita-1.jpg  ->  tulis "/photos/kita-1.jpg"
-// Helper withBase() yang akan menambahkan prefix repo otomatis saat deploy.
+// Helper withBase() akan menambahkan prefix repo otomatis saat deploy.
 
 // ---------------------------------------------------------------------------
 // Tipe data (kontrak) supaya kalau salah tulis, editor langsung memberi tanda.
@@ -20,124 +20,104 @@ export type Photo = {
   alt: string; // deskripsi foto untuk pembaca layar (aksesibilitas)
 };
 
-export type TimelineItem = {
-  date: string; // contoh: "14 Februari 2023"
-  title: string; // judul singkat momen
-  description: string; // cerita singkat momen itu
-};
-
 export type Reason = {
   icon: string; // satu emoji sebagai ikon kartu
   title: string; // alasan singkat
   detail: string; // penjelasan singkat
 };
 
+// Satu orang dalam "Buku Nikah Kita".
+export type BookPerson = {
+  label: string; // contoh: "Yang Tercinta" / "Yang Mencintai"
+  name: string;
+  photo: string; // lokasi file di /public
+  photoAlt: string;
+  // TODO (opsional): isi tempat/tanggal lahir kalau mau. JANGAN dikarang.
+  birthPlaceDate?: string;
+  // TODO (opsional): isi julukan/panggilan sayang kalau mau. JANGAN dikarang.
+  nickname?: string;
+};
+
+export type MarriageBook = {
+  title: string;
+  subtitle: string;
+  serial: string; // nomor seri fiktif
+  since: string; // teks "Bersama sejak ..."
+  stamp: string; // teks cap dekoratif
+  promise: string; // satu kalimat janji
+  left: BookPerson; // halaman kiri
+  right: BookPerson; // halaman kanan
+};
+
 export type SiteContent = {
   partnerName: string;
   myName: string;
-  startDate: string; // format ISO: "YYYY-MM-DDTHH:mm:ss"
+  startDate: string; // format ISO dengan zona waktu, contoh: "2024-03-28T00:00:00+07:00"
   openingQuote: string;
   openingSubtitle: string;
+  loveWords: string[]; // kata-kata yang berjalan (marquee)
   photos: Photo[];
-  timeline: TimelineItem[];
   letter: string;
+  letterSignature: string; // tanda tangan di akhir surat
   reasons: Reason[];
+  marriageBook: MarriageBook;
   closingTitle: string;
   closingMessage: string;
   musicSrc: string;
 };
 
 // ---------------------------------------------------------------------------
-// ISI KONTEN — ganti teks di bawah dengan ceritamu sendiri ya!
+// ISI KONTEN
 // ---------------------------------------------------------------------------
 export const site: SiteContent = {
-  // Nama kalian (ditampilkan di hero & penutup).
-  partnerName: "Sayang",
-  myName: "Aku",
+  // Nama kalian. partnerName dipakai di hero; myName di tanda tangan & footer.
+  partnerName: "FIKA ARISTIA PRATAMA",
+  myName: "GRESHYA FHAREL IBRAHIM",
 
-  // Tanggal jadian. Dipakai untuk penghitung hari bersama.
-  // Format: Tahun-Bulan-Hari jam:menit:detik (contoh ini 14 Feb 2023, 20:00).
-  startDate: "2023-02-14T20:00:00",
+  // Tanggal jadian (zona waktu WIB). Dipakai untuk penghitung hari bersama.
+  startDate: "2024-03-28T00:00:00+07:00",
 
   // Kalimat pembuka di layar hero.
   openingQuote: "Setiap detik bersamamu adalah bagian terindah dari ceritaku.",
   openingSubtitle: "Sebuah halaman kecil yang kubuat khusus untukmu.",
 
-  // Daftar foto. Tambah/hapus sesuai keinginan. caption & alt wajib diisi.
-  photos: [
-    {
-      src: "/photos/kita-1.jpg",
-      caption: "Pertama kali kita jalan bareng",
-      alt: "Foto kami sedang berjalan berdua",
-    },
-    {
-      src: "/photos/kita-2.jpg",
-      caption: "Ketawa sampai lupa waktu",
-      alt: "Foto kami tertawa bersama",
-    },
-    {
-      src: "/photos/kita-3.jpg",
-      caption: "Sore yang tidak akan kulupakan",
-      alt: "Foto kami berdua menikmati sore hari",
-    },
-    {
-      src: "/photos/kita-4.jpg",
-      caption: "Kamu, aku, dan langit senja",
-      alt: "Foto kami berdua dengan latar langit senja",
-    },
-    {
-      src: "/photos/kita-5.jpg",
-      caption: "Momen sederhana tapi paling berharga",
-      alt: "Foto momen sederhana kami berdua",
-    },
-    {
-      src: "/photos/kita-6.jpg",
-      caption: "Terima kasih sudah selalu ada",
-      alt: "Foto kami berdua saling tersenyum",
-    },
+  // Kata-kata yang berjalan (marquee) di halaman.
+  loveWords: [
+    "Selamanya",
+    "Kamu & Aku",
+    "Bahagia",
+    "Rumah",
+    "Sayang",
+    "Cinta",
+    "Kita",
+    "Selalu",
   ],
 
-  // Timeline kenangan — urut dari yang paling lama ke paling baru.
-  timeline: [
-    {
-      date: "14 Februari 2023",
-      title: "Hari kita mulai",
-      description:
-        "Hari pertama kamu bilang iya. Sejak itu duniamu jadi dunianya kita berdua.",
-    },
-    {
-      date: "Maret 2023",
-      title: "Jalan pertama",
-      description:
-        "Kita canggung, kita gugup, tapi pulangnya aku sadar aku betah sama kamu.",
-    },
-    {
-      date: "Juni 2023",
-      title: "Liburan kecil",
-      description:
-        "Perjalanan singkat yang bikin aku makin yakin mau jalan jauh sama kamu.",
-    },
-    {
-      date: "Desember 2023",
-      title: "Pertama kali ngambek",
-      description:
-        "Ternyata setelah ribut, aku makin sayang. Maaf kalau aku keras kepala ya.",
-    },
-    {
-      date: "Hari ini",
-      title: "Masih memilih kamu",
-      description:
-        "Dan setiap hari aku masih memilih kamu, lagi dan lagi, tanpa ragu.",
-    },
+  // Daftar foto galeri (hasil `npm run photos`, file di public/photos/).
+  photos: [
+    // TODO: ganti caption "Memori ke-N" dengan cerita aslinya.
+    { src: "/photos/memori-01.jpg", caption: "Memori ke-1", alt: "Foto kenangan ke-1" },
+    { src: "/photos/memori-02.jpg", caption: "Memori ke-2", alt: "Foto kenangan ke-2" },
+    { src: "/photos/memori-03.jpg", caption: "Memori ke-3", alt: "Foto kenangan ke-3" },
+    { src: "/photos/memori-04.jpg", caption: "Memori ke-4", alt: "Foto kenangan ke-4" },
+    { src: "/photos/memori-05.jpg", caption: "Memori ke-5", alt: "Foto kenangan ke-5" },
+    { src: "/photos/memori-06.jpg", caption: "Memori ke-6", alt: "Foto kenangan ke-6" },
+    { src: "/photos/memori-07.jpg", caption: "Memori ke-7", alt: "Foto kenangan ke-7" },
+    { src: "/photos/memori-08.jpg", caption: "Memori ke-8", alt: "Foto kenangan ke-8" },
+    { src: "/photos/memori-09.jpg", caption: "Memori ke-9", alt: "Foto kenangan ke-9" },
+    { src: "/photos/memori-10.jpg", caption: "Memori ke-10", alt: "Foto kenangan ke-10" },
   ],
 
   // Isi surat cinta. Pakai "\n\n" untuk memisahkan paragraf.
   letter: [
-    "Untuk kamu yang selalu jadi alasan aku semangat,",
+    "Untuk FIKA ARISTIA PRATAMA,",
     "Aku tidak pandai merangkai kata, jadi kubuat halaman ini supaya kamu tahu betapa berartinya kamu. Terima kasih sudah sabar, sudah peduli, dan sudah memilih bertahan.",
     "Kalau suatu hari kamu merasa lelah, ingat ya, kamu tidak harus menjalani semuanya sendiri. Aku ada di sini, untuk dijadikan tempat pulang.",
     "Dengan sayang yang tidak akan pernah selesai,",
   ].join("\n\n"),
+
+  // Tanda tangan di akhir surat (juga tampil di footer).
+  letterSignature: "GRESHYA FHAREL IBRAHIM",
 
   // Kartu "alasan aku sayang kamu". Bisa ditambah sebanyak apa pun.
   reasons: [
@@ -172,6 +152,33 @@ export const site: SiteContent = {
       detail: "Detail kecil yang kamu lakukan, itu yang paling aku rindukan.",
     },
   ],
+
+  // "Buku Nikah Kita" — versi romantis/candaan, bukan dokumen resmi.
+  marriageBook: {
+    title: "BUKU NIKAH KITA",
+    subtitle: "Edisi Cinta",
+    serial: "BN-28032024",
+    since: "Bersama sejak 28 Maret 2024",
+    stamp: "SAH MENURUT HATI",
+    // Kalimat janji (boleh diganti).
+    promise: "Aku janji akan terus memilihmu, menjaga, dan menemanimu di setiap keadaan.",
+    left: {
+      label: "Yang Tercinta",
+      name: "FIKA ARISTIA PRATAMA",
+      photo: "/photos/fika.jpg",
+      photoAlt: "Foto Fika Aristia Pratama",
+      // birthPlaceDate: "", // TODO: isi kalau mau (jangan dikarang)
+      // nickname: "",        // TODO: isi kalau mau (jangan dikarang)
+    },
+    right: {
+      label: "Yang Mencintai",
+      name: "GRESHYA FHAREL IBRAHIM",
+      photo: "/photos/greshya.jpg",
+      photoAlt: "Foto Greshya Fharel Ibrahim",
+      // birthPlaceDate: "", // TODO: isi kalau mau (jangan dikarang)
+      // nickname: "",        // TODO: isi kalau mau (jangan dikarang)
+    },
+  },
 
   // Kalimat penutup di bagian akhir halaman.
   closingTitle: "Aku cinta kamu 🤍",

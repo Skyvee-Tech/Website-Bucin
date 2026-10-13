@@ -6,18 +6,19 @@ import { site } from "@/content/site";
 import SectionReveal from "./SectionReveal";
 
 // ---------------------------------------------------------------------------
-// Countdown — penghitung "sudah bersama selama ..." (hari, jam, menit).
+// Countdown — penghitung "sudah bersama selama ..." (hari, jam, menit, detik).
 // ---------------------------------------------------------------------------
 // Nilai awal `null` supaya server & browser tidak berbeda (hindari hydration
-// mismatch); nilainya baru dihitung setelah komponen terpasang di browser.
+// mismatch); nilainya baru dihitung setelah komponen terpasang di browser,
+// lalu diperbarui tiap 1 detik. Interval dibersihkan saat unmount.
 
 function Stat({ label, value }: { label: string; value: number | null }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-border bg-white/70 px-3 py-5 shadow-sm backdrop-blur-sm">
-      <span className="font-heading text-[clamp(1.75rem,11vw,3.25rem)] leading-none tabular-nums text-primary">
+    <div className="flex flex-col items-center rounded-2xl border border-border bg-white/70 px-2 py-4 shadow-sm backdrop-blur-sm sm:px-3 sm:py-5">
+      <span className="font-heading text-[clamp(1.75rem,8vw,3rem)] leading-none tabular-nums text-primary">
         {value === null ? "–" : value}
       </span>
-      <span className="mt-2 text-xs uppercase tracking-[0.2em] text-accent">
+      <span className="mt-2 text-[0.65rem] uppercase tracking-[0.2em] text-accent sm:text-xs">
         {label}
       </span>
     </div>
@@ -29,9 +30,9 @@ export default function Countdown() {
 
   useEffect(() => {
     const update = () => setElapsed(getElapsed(site.startDate));
-    // Sinkron dengan jam sistem HP; di-update sekali sekarang lalu tiap menit.
+    // Hitung langsung setelah mount, lalu berdetak tiap detik.
     update();
-    const id = window.setInterval(update, 60_000);
+    const id = window.setInterval(update, 1000);
     return () => window.clearInterval(id);
   }, []);
 
@@ -56,11 +57,12 @@ export default function Countdown() {
       ) : (
         <SectionReveal
           delay={0.1}
-          className="mt-8 grid grid-cols-3 gap-3 sm:gap-5"
+          className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-5"
         >
           <Stat label="Hari" value={elapsed?.days ?? null} />
           <Stat label="Jam" value={elapsed?.hours ?? null} />
           <Stat label="Menit" value={elapsed?.minutes ?? null} />
+          <Stat label="Detik" value={elapsed?.seconds ?? null} />
         </SectionReveal>
       )}
     </section>

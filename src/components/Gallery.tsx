@@ -6,14 +6,22 @@ import { AnimatePresence, motion } from "motion/react";
 import { site } from "@/content/site";
 import { withBase } from "@/lib/withBase";
 import SectionReveal from "./SectionReveal";
+import manifest from "@/content/photos-manifest.json";
 
 // ---------------------------------------------------------------------------
-// Gallery — grid foto responsif + lightbox.
+// Gallery — galeri masonry responsif + lightbox.
 // ---------------------------------------------------------------------------
-// - Grid: 2 kolom di HP, 3 kolom di tablet ke atas.
-// - Foto pakai aspek tetap (4:5) supaya tata letak tidak "melompat" saat load.
-// - Lightbox bisa di-swipe, diklik tombol, dan lewat keyboard (Esc & panah).
-// - Fokus keyboard terkunci di dalam lightbox.
+// - Masonry (CSS columns) supaya foto potret & lanskap tampil rapi.
+// - Ukuran asli (lebar x tinggi) diambil dari manifest hasil `npm run photos`
+//   sehingga tidak ada layout shift saat foto dimuat.
+// - Lightbox tetap: bisa swipe, panah, keyboard (Esc), fokus terkunci.
+
+const sizes = manifest as Record<string, { width: number; height: number }>;
+
+function sizeOf(src: string) {
+  const file = src.split("/").pop() ?? "";
+  return sizes[file] ?? { width: 4, height: 5 };
+}
 
 export default function Gallery() {
   const [index, setIndex] = useState<number | null>(null);
@@ -86,10 +94,7 @@ export default function Gallery() {
   }, [open, close, next, prev]);
 
   return (
-    <section
-      id="galeri"
-      className="mx-auto w-full max-w-4xl px-5 py-20 sm:px-8"
-    >
+    <section id="galeri" className="mx-auto w-full max-w-4xl px-5 py-20 sm:px-8">
       <SectionReveal>
         <p className="text-center text-xs uppercase tracking-[0.35em] text-accent">
           Galeri
@@ -97,33 +102,44 @@ export default function Gallery() {
         <h2 className="mt-3 text-center text-[clamp(1.6rem,7vw,2.5rem)] text-primary">
           Momen kita
         </h2>
+        <p className="mt-3 text-center text-sm text-foreground/70">
+          Ketuk foto untuk melihat lebih besar.
+        </p>
       </SectionReveal>
 
-      {/* Grid foto */}
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-        {site.photos.map((photo, i) => (
-          <SectionReveal key={photo.src} delay={i * 0.05}>
-            <button
-              type="button"
-              onClick={() => setIndex(i)}
-              aria-label={`Buka foto: ${photo.caption}`}
-              className="group relative block aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm"
+      {/* Masonry: 2 kolom di HP, 3 kolom di tablet ke atas. */}
+      <div className="mt-8 columns-2 gap-3 sm:columns-3 sm:gap-4 [column-fill:_balance]">
+        {site.photos.map((photo, i) => {
+          const { width, height } = sizeOf(photo.src);
+          return (
+            <SectionReveal
+              key={photo.src}
+              delay={Math.min(i * 0.04, 0.4)}
+              className="mb-3 break-inside-avoid sm:mb-4"
             >
-              <Image
-                src={withBase(photo.src)}
-                alt={photo.alt}
-                fill
-                unoptimized
-                loading="lazy"
-                sizes="(max-width: 640px) 50vw, 33vw"
-                className="object-cover transition-transform duration-500 group-active:scale-105"
-              />
-              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent p-2.5 text-left text-xs text-white">
-                {photo.caption}
-              </span>
-            </button>
-          </SectionReveal>
-        ))}
+              <button
+                type="button"
+                onClick={() => setIndex(i)}
+                aria-label={`Buka foto: ${photo.caption}`}
+                className="group relative block w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm"
+              >
+                <Image
+                  src={withBase(photo.src)}
+                  alt={photo.alt}
+                  width={width}
+                  height={height}
+                  unoptimized
+                  loading="lazy"
+                  sizes="(max-width: 640px) 50vw, 33vw"
+                  className="h-auto w-full object-cover transition-transform duration-500 group-active:scale-[1.03]"
+                />
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-left text-xs text-white">
+                  {photo.caption}
+                </span>
+              </button>
+            </SectionReveal>
+          );
+        })}
       </div>
 
       {/* Lightbox */}
@@ -150,7 +166,6 @@ export default function Gallery() {
 
             {/* Area foto (bisa digeser ke kiri/kanan) */}
             <div className="relative flex flex-1 items-center justify-center overflow-hidden px-3">
-              {/* Tombol sebelumnya (kiri) */}
               <button
                 type="button"
                 onClick={prev}
@@ -195,7 +210,6 @@ export default function Gallery() {
                 />
               </motion.div>
 
-              {/* Tombol berikutnya (kanan) */}
               <button
                 type="button"
                 onClick={next}
@@ -220,9 +234,7 @@ export default function Gallery() {
             {/* Caption + tombol tutup (dekat jempol di bagian bawah) */}
             <div
               className="flex flex-col items-center gap-3 px-5 pt-3"
-              style={{
-                paddingBottom: "calc(1rem + env(safe-area-inset-bottom))",
-              }}
+              style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom))" }}
             >
               <p className="text-center text-sm text-white/90">
                 {current.caption}

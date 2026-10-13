@@ -1,0 +1,50 @@
+{
+  "memori-01.jpg": {
+    "width": 900,
+    "height": 1600
+  },
+  "memori-02.jpg": {
+    "width": 1200,
+    "height": 1600
+  },
+  "memori-03.jpg": {
+    "width": 1200,
+    "height": 1600
+  },
+  "memori-04.jpg": {
+    "width": 780,
+    "height": 1040
+  },
+  "memori-05.jpg": {
+    "width": 1178,
+    "height": 1280
+  },
+  "memori-06.jpg": {
+    "width": 1143,
+    "height": 1600
+  },
+  "memori-07.jpg": {
+    "width": 1200,
+    "height": 1600
+  },
+  "memori-08.jpg": {
+    "width": 1200,
+    "height": 1600
+  },
+  "memori-09.jpg": {
+    "width": 576,
+    "height": 768
+  },
+  "memori-10.jpg": {
+    "width": 720,
+    "height": 1280
+  },
+  "fika.jpg": {
+    "width": 679,
+    "height": 1000
+  },
+  "greshya.jpg": {
+    "width": 667,
+    "height": 1000
+  }
+}

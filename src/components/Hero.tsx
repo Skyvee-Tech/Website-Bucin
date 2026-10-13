@@ -36,6 +36,25 @@ export default function Hero() {
         initial="hidden"
         animate="show"
       >
+        {/* Hati berdenyut */}
+        <motion.span
+          variants={item}
+          className="mb-1 inline-flex text-secondary"
+          aria-hidden="true"
+        >
+          <motion.svg
+            viewBox="0 0 24 24"
+            className="h-7 w-7"
+            animate={{ scale: [1, 1.15, 1] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <path
+              fill="currentColor"
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            />
+          </motion.svg>
+        </motion.span>
+
         <motion.p
           variants={item}
           className="text-xs uppercase tracking-[0.4em] text-accent sm:text-sm"
@@ -45,10 +64,28 @@ export default function Hero() {
 
         <motion.h1
           variants={item}
-          className="mt-4 font-heading text-[clamp(2.75rem,13vw,5.5rem)] text-primary"
+          className="mt-3 max-w-4xl text-balance font-heading text-[clamp(2rem,9vw,4.5rem)] leading-[1.05] text-primary"
         >
           {site.partnerName}
         </motion.h1>
+
+        {/* Garis hias yang tergambar di bawah nama */}
+        <motion.svg
+          viewBox="0 0 200 10"
+          className="mt-3 h-3 w-44 text-accent"
+          fill="none"
+          aria-hidden="true"
+        >
+          <motion.path
+            d="M2 6 C 50 0, 150 0, 198 6"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1.2, delay: 1 }}
+          />
+        </motion.svg>
 
         <motion.p
           variants={item}

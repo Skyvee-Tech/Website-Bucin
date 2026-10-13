@@ -25,6 +25,8 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Untuk Kamu",
   description: "Sebuah halaman kecil yang dibuat khusus untuk seseorang yang spesial.",
+  // Halaman ini bersifat pribadi — minta mesin pencari TIDAK mengindeksnya.
+  robots: { index: false, follow: false },
 };
 
 // ---------------------------------------------------------------------------

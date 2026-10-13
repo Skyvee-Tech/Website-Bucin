@@ -66,6 +66,14 @@ export default function LoveLetter() {
             )}
           </p>
 
+          {/* Tanda tangan pengirim, muncul setelah surat selesai diketik. */}
+          <p
+            aria-hidden={!finished}
+            className={`mt-6 font-heading text-lg text-primary transition-opacity duration-700 ${finished ? "opacity-100" : "opacity-0"}`}
+          >
+            {site.letterSignature}
+          </p>
+
           {!finished && (
             <button
               type="button"

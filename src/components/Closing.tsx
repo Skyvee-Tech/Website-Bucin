@@ -39,7 +39,7 @@ export default function Closing() {
       <p className="mt-8 font-heading text-lg text-accent">— {site.myName}</p>
 
       <footer className="mt-16 border-t border-border pt-6 text-xs text-foreground/70">
-        Dibuat dengan sepenuh hati.
+        Dibuat dengan sepenuh hati oleh {site.myName}.
       </footer>
     </section>
   );
