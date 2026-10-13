@@ -7,7 +7,7 @@ import Countdown from "@/components/Countdown";
 import MarriageBook from "@/components/MarriageBook";
 import Gallery from "@/components/Gallery";
 import LoveLetter from "@/components/LoveLetter";
-import Reasons from "@/components/Reasons";
+import KataKata from "@/components/KataKata";
 import Closing from "@/components/Closing";
 import Divider from "@/components/Divider";
 import { site } from "@/content/site";
@@ -31,7 +31,7 @@ export default function Home() {
         <Divider />
         <LoveLetter />
         <Divider />
-        <Reasons />
+        <KataKata />
         <Divider />
         <Closing />
       </main>

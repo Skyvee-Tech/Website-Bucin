@@ -20,10 +20,9 @@ export type Photo = {
   alt: string; // deskripsi foto untuk pembaca layar (aksesibilitas)
 };
 
-export type Reason = {
-  icon: string; // satu emoji sebagai ikon kartu
-  title: string; // alasan singkat
-  detail: string; // penjelasan singkat
+export type Quotes = {
+  first: string; // kutipan pertama
+  second: string[]; // kutipan kedua, dipecah per kalimat
 };
 
 // Satu orang dalam "Buku Nikah Kita".
@@ -59,10 +58,9 @@ export type SiteContent = {
   photos: Photo[];
   letter: string;
   letterSignature: string; // tanda tangan di akhir surat
-  reasons: Reason[];
   marriageBook: MarriageBook;
-  closingTitle: string;
-  closingMessage: string;
+  quotes: Quotes; // section "Kata-kata"
+  closingLetter: string[]; // teks penutup di akhir halaman (per paragraf)
   musicSrc: string;
 };
 
@@ -119,40 +117,6 @@ export const site: SiteContent = {
   // Tanda tangan di akhir surat (juga tampil di footer).
   letterSignature: "GRESHYA FHAREL IBRAHIM",
 
-  // Kartu "alasan aku sayang kamu". Bisa ditambah sebanyak apa pun.
-  reasons: [
-    {
-      icon: "🌷",
-      title: "Karena kamu kamu",
-      detail: "Tidak perlu alasan rumit. Kamu sungguh jadi kamu, dan itu cukup.",
-    },
-    {
-      icon: "☀️",
-      title: "Bikin hariku cerah",
-      detail: "Sekalipun hari berat, ngobrol sama kamu selalu menenangkan.",
-    },
-    {
-      icon: "🤝",
-      title: "Selalu ada",
-      detail: "Kamu hadir di momen senangku dan tetap tinggal di momen sulitku.",
-    },
-    {
-      icon: "😂",
-      title: "Jokes receh kamu",
-      detail: "Tertawa bareng kamu itu obat paling murah dan paling manjur.",
-    },
-    {
-      icon: "🌟",
-      title: "Kamu kuat",
-      detail: "Lihat kamu berjuang bikin aku ikut ingin jadi lebih baik.",
-    },
-    {
-      icon: "💗",
-      title: "Cara kamu sayang",
-      detail: "Detail kecil yang kamu lakukan, itu yang paling aku rindukan.",
-    },
-  ],
-
   // "Buku Nikah Kita" — versi romantis/candaan, bukan dokumen resmi.
   marriageBook: {
     title: "BUKU NIKAH KITA",
@@ -180,10 +144,28 @@ export const site: SiteContent = {
     },
   },
 
-  // Kalimat penutup di bagian akhir halaman.
-  closingTitle: "Aku cinta kamu 🤍",
-  closingMessage:
-    "Terima kasih sudah membuka halaman ini sampai selesai. Ini hadiah kecil dariku untukmu.",
+  // Section "Kata-kata" — ditulis PERSIS sesuai permintaan (jangan diperbaiki).
+  quotes: {
+    first:
+      "dan jika engkau adalah hujan badai yang penuh gemuruh, aku adalah yang tidak memilih berteduh.",
+    // Kutipan kedua dipecah per kalimat agar muncul bertahap di HP.
+    second: [
+      " jika aku mencintaimu karena kamu baik, mungkin aku sudah tidak mencintaimu lagi saat pertama kali kau menyakitiku,",
+      " jika alasanku mencintaimu karna penasaran, mungkin aku sudah tidak mencintaimu lagi saat sudah tau banyak tentangmu,",
+      " jika alasanku mencintaimu karna kepribadianmu,mungkin aku sudah tidak mencintaimu lagi saat sudah mengetahui sikapmu di belakangku,",
+      " tapi aku mencintaimu karna itu kamu, semua kurang lebihmu.",
+    ],
+  },
+
+  // Teks penutup di akhir halaman — ditulis PERSIS (bahasa Inggris), per paragraf.
+  closingLetter: [
+    "sorry if i don't treat you the way you wanted to be treated. i'm sorry for not being enough for you. sorry i'm not good at fixing problems. but i hope you know that i'm always trying my best to be better for you.",
+    "with or without me, go chase every dream you've ever talked about. become everything you told me you wanted to be. I'll still be smiling, watching you win from afar.",
+    "If i see you falling in love with someone else, i wish you happiness always.",
+    "And if i ever did hurt you and you never told me about it, i'm sorry.",
+    "Don't worry about hurting my feelings, I've been left in the dark so many times, I've been everyone's last choice and I've have been pushed away. I've learned to accept the disappointed.",
+    "Hard work don't scare me. I'll get my hands dirty, bleed a little, sweat a lot, and still won't quit. That's just me. Built to grind, build to endure, built to never give up.",
+  ],
 
   // File musik latar. Ganti dengan file mp3 milikmu di public/music/.
   musicSrc: "/music/lagu.mp3",

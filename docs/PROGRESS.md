@@ -22,7 +22,7 @@ Konten personal hanya ada di `src/content/site.ts`.
 - `src/components/` — komponen kecil satu tanggung jawab:
   `MotionProvider`, `AudioProvider`, `OpenGate`, `MusicButton`, `Hero`,
   `FloatingHearts`, `WordMarquee`, `SectionReveal`, `Divider`, `Countdown`,
-  `MarriageBook`, `Gallery`, `LoveLetter`, `Reasons`, `Closing`.
+  `MarriageBook`, `Gallery`, `LoveLetter`, `KataKata`, `Closing`.
 - `raw-photos/` — foto mentah (di-.gitignore; dioptimasi lewat `npm run photos`).
 - `scripts/optimize-photos.mjs` + `src/content/photos-manifest.json` — pipeline foto.
 - `public/photos`, `public/music` — aset hasil (di-commit).
@@ -66,6 +66,11 @@ Konten personal hanya ada di `src/content/site.ts`.
 - Privasi: `robots noindex,nofollow` (metadata) + `public/robots.txt` Disallow.
 - Animasi tambahan: marquee kata (`WordMarquee`), ornamen pembatas (`Divider`),
   hero (hati berdenyut + garis nama).
+- Section "Kata-kata" (komponen `KataKata`) = dua kutipan (ditulis PERSIS),
+  kutipan kedua dipecah per kalimat & muncul bertahap; menggantikan section
+  "alasan sayang" (komponen `Reasons` dihapus).
+- Teks penutup baru (`closingLetter`, bahasa Inggris, PERSIS) muncul bertahap
+  per paragraf; tanda tangan + footer tetap menampilkan nama pengirim.
 - Verifikasi ini: `npm test` 7/7, lint bersih, build PASS; headless tanpa error
   hydration; detik berdetak; buku `aria-expanded=true`.
 

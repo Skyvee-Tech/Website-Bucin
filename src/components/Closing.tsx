@@ -1,12 +1,24 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import { site } from "@/content/site";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 // ---------------------------------------------------------------------------
-// Closing — bagian penutup + footer.
+// Closing — teks penutup di akhir halaman + footer.
 // ---------------------------------------------------------------------------
+// Teks ditulis PERSIS (bahasa Inggris) dan muncul bertahap per paragraf saat
+// di-scroll. Tipografi dibuat tenang dan mudah dibaca.
+
+const container: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.25 } },
+};
+
+const item: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+};
 
 export default function Closing() {
   const reduce = useReducedMotionSafe();
@@ -18,7 +30,7 @@ export default function Closing() {
     >
       <motion.div
         aria-hidden="true"
-        className="mx-auto mb-6 h-10 w-10 text-secondary"
+        className="mx-auto mb-8 h-10 w-10 text-secondary"
         animate={reduce ? undefined : { scale: [1, 1.12, 1] }}
         transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
       >
@@ -30,13 +42,26 @@ export default function Closing() {
         </svg>
       </motion.div>
 
-      <h2 className="font-heading text-[clamp(1.9rem,8vw,3rem)] text-primary">
-        {site.closingTitle}
-      </h2>
-      <p className="mx-auto mt-4 max-w-prose text-base leading-relaxed text-foreground/80">
-        {site.closingMessage}
-      </p>
-      <p className="mt-8 font-heading text-lg text-accent">— {site.myName}</p>
+      {/* Teks penutup — muncul bertahap per paragraf. */}
+      <motion.div
+        className="mx-auto max-w-prose space-y-5 text-left"
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.15 }}
+      >
+        {site.closingLetter.map((paragraph, i) => (
+          <motion.p
+            key={i}
+            variants={item}
+            className="text-[clamp(0.98rem,4.2vw,1.15rem)] font-light leading-relaxed text-foreground/85"
+          >
+            {paragraph}
+          </motion.p>
+        ))}
+      </motion.div>
+
+      <p className="mt-10 font-heading text-lg text-accent">— {site.myName}</p>
 
       <footer className="mt-16 border-t border-border pt-6 text-xs text-foreground/70">
         Dibuat dengan sepenuh hati oleh {site.myName}.
