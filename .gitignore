@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# superpowers scratch (ledger proses, tidak perlu di-commit)
+/.superpowers/
+
+# skill UI/UX dari uipro — alat bantu lokal, tidak perlu di-commit
+/.opencode/

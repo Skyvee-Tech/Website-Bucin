@@ -1,0 +1,69 @@
+# ===========================================================================
+# Deploy otomatis ke GitHub Pages
+# ===========================================================================
+# Setiap kali kamu push ke branch `main`, GitHub akan:
+#   1. Install dependency
+#   2. Build website statis (folder `out`)
+#   3. Meng-upload hasilnya dan menayangkannya di GitHub Pages
+#
+# Setelah push pertama, ubah: Settings > Pages > Source = "GitHub Actions".
+name: Deploy ke GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Tombol "Run workflow" manual di tab Actions.
+  workflow_dispatch:
+
+# Izin yang dibutuhkan GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Hanya jalankan satu deploy sekaligus.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependency (bersih)
+        run: npm ci
+
+      - name: Build
+        # NEXT_PUBLIC_BASE_PATH diisi "/<nama-repo>" supaya semua halaman & aset
+        # (termasuk foto & mp3 di /public) punya prefix yang benar di GitHub Pages.
+        env:
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+        run: npm run build
+
+      - name: Siapkan GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload hasil build (folder out)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publikasikan ke GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Folder skill UI/UX (instalasi uipro) — bukan kode aplikasi kita:
+    ".opencode/**",
   ]),
 ]);
 
