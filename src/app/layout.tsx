@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Poppins } from "next/font/google";
 import "./globals.css";
 import MotionProvider from "@/components/MotionProvider";
+import { withBase } from "@/lib/withBase";
 
 // ---------------------------------------------------------------------------
 // FONT
@@ -22,11 +23,31 @@ const poppins = Poppins({
   display: "swap",
 });
 
+// Origin situs (TANPA base path). Next menambahkan base path sendiri ke aset
+// metadata (mis. opengraph-image.png), jadi jangan dobel di metadataBase.
+const siteOrigin =
+  process.env.NEXT_PUBLIC_SITE_ORIGIN ?? "https://skyvee-tech.github.io";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteOrigin),
   title: "Untuk Kamu",
   description: "Sebuah halaman kecil yang dibuat khusus untuk seseorang yang spesial.",
   // Halaman ini bersifat pribadi — minta mesin pencari TIDAK mengindeksnya.
   robots: { index: false, follow: false },
+  // Pratinjau saat link dibagikan (mis. WhatsApp/IG). Gambarnya dari
+  // src/app/opengraph-image.png (dipakai otomatis oleh Next).
+  openGraph: {
+    type: "website",
+    title: "Untuk Kamu",
+    description: "Sebuah halaman kecil yang dibuat khusus untuk seseorang yang spesial.",
+    url: withBase("/"),
+    siteName: "Untuk Kamu",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Untuk Kamu",
+    description: "Sebuah halaman kecil yang dibuat khusus untuk seseorang yang spesial.",
+  },
 };
 
 // ---------------------------------------------------------------------------

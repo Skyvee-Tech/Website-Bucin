@@ -192,3 +192,17 @@ Konten personal hanya ada di `src/content/site.ts`.
   HARUS mendukung **HTTP Range**. Kalau tidak, Chrome menandai audio
   `seekable=[0,0]` dan geser posisi tampak rusak padahal aplikasinya benar.
   GitHub Pages & `next dev` sudah mendukung Range.
+
+## Hemat kuota & pratinjau saat dibagikan
+
+- `<audio>` memakai `preload="metadata"` (bukan `auto`) supaya lagu 5 MB TIDAK
+  diunduh saat halaman dibuka. Pembacaan tag ID3 (`src/lib/trackMeta.ts`) juga
+  memakai **HTTP Range** (dua permintaan kecil: header 10 byte, lalu isi tag),
+  dengan fallback baca-stream-lalu-batalkan kalau server tak mendukung Range.
+  Hasil terverifikasi: semua permintaan `lagu.mp3` saat halaman dimuat = `206`
+  (bukan `200` full-body); judul/artis tetap terbaca.
+- Pratinjau link saat dibagikan (WhatsApp/IG): `src/app/opengraph-image.png`
+  (1200x630, lewat file convention Next) + `metadataBase`/`openGraph`/`twitter`
+  di `layout.tsx`. **Penting:** `metadataBase` memakai **origin saja** —
+  Next menambahkan base path sendiri ke aset metadata, kalau dobel URL-nya rusak.
+  Gambar dibuat ulang lewat `scripts/og-card.html` (render 1200x630 di browser).

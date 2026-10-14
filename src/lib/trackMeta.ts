@@ -1,8 +1,9 @@
 // ---------------------------------------------------------------------------
 // trackMeta — unduh tag ID3 sebuah lagu lalu siapkan judul/artis/cover.
 // ---------------------------------------------------------------------------
-// Dipakai di sisi browser. Hanya mengunduh bagian tag (streaming) lalu berhenti,
-// jadi tidak perlu mengunduh seluruh file mp3.
+// Dipakai di sisi browser. Sengaja HANYA mengambil bagian tag, bukan seluruh
+// file mp3: pakai permintaan HTTP Range kalau didukung server; kalau tidak,
+// baca stream sedikit-sedikit lalu dibatalkan.
 
 import { id3TagSize, parseId3, type Id3Info } from "./id3";
 
@@ -22,9 +23,8 @@ function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
   return out;
 }
 
-// Ambil byte tag ID3 saja dengan membaca stream sedikit demi sedikit.
-export async function fetchId3Tag(src: string): Promise<Uint8Array> {
-  const res = await fetch(src);
+// Baca stream sampai byte tag lengkap, lalu batalkan (untuk server tanpa Range).
+async function readUntilTag(res: Response): Promise<Uint8Array> {
   if (!res.body) return new Uint8Array(0);
   const reader = res.body.getReader();
   let buffer: Uint8Array = new Uint8Array(0);
@@ -48,6 +48,23 @@ export async function fetchId3Tag(src: string): Promise<Uint8Array> {
     }
   }
   return buffer;
+}
+
+export async function fetchId3Tag(src: string): Promise<Uint8Array> {
+  // Minta 10 byte header dulu. Kalau server mendukung Range (206), kita bisa
+  // mengunduh tepat sebesar tag-nya saja.
+  const head = await fetch(src, { headers: { Range: "bytes=0-9" } });
+  if (head.status !== 206) return readUntilTag(head); // server abaikan Range
+  const headBytes = new Uint8Array(await head.arrayBuffer());
+
+  const size = id3TagSize(headBytes);
+  if (size === null) return headBytes;
+
+  const end = Math.min(9 + size, MAX_TAG - 1);
+  const tag = await fetch(src, { headers: { Range: `bytes=0-${end}` } });
+  if (tag.status !== 206) return readUntilTag(tag);
+  const tagBytes = new Uint8Array(await tag.arrayBuffer());
+  return tagBytes.length >= headBytes.length ? tagBytes : headBytes;
 }
 
 export async function loadTrackMeta(src: string): Promise<TrackMeta> {

@@ -246,11 +246,13 @@ export default function AudioProvider({
   return (
     <AudioCtx.Provider value={value}>
       {children}
+      {/* "metadata" (bukan "auto") supaya lagu 5 MB TIDAK diunduh saat halaman
+          dibuka; hanya header-nya. Pemutaran penuh menyusul saat gerbang diketuk. */}
       <audio
         ref={audioRef}
         src={src}
         loop={total <= 1}
-        preload="auto"
+        preload="metadata"
         onPlay={(e) => {
           setPlaying(true);
           syncDuration(e.currentTarget);
