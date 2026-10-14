@@ -131,6 +131,12 @@ export default function Gallery() {
                   unoptimized
                   loading="lazy"
                   sizes="(max-width: 640px) 50vw, 33vw"
+                  // Rasio ditulis juga di CSS, bukan hanya lewat atribut
+                  // width/height. Atribut saja sebenarnya sudah cukup (tidak
+                  // ada pergeseran tata letak), tapi menuliskannya eksplisit
+                  // membuat ruang foto tetap terpesan walau nanti kelas
+                  // `h-auto` diubah orang lain.
+                  style={{ aspectRatio: `${width} / ${height}` }}
                   className="h-auto w-full object-cover transition-transform duration-500 group-active:scale-[1.03]"
                 />
                 <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-left text-xs text-white">

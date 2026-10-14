@@ -83,3 +83,45 @@ Konten personal hanya ada di `src/content/site.ts`.
 - [x] FASE 3 — Live di `https://skyvee-tech.github.io/Website-Bucin/`.
 - [x] Revisi (nama/tanggal/detik, hapus timeline, pipeline foto, galeri masonry,
   buku nikah, privasi, animasi). Menunggu commit/push dari user.
+
+## Perbaikan error hydration pada FloatingHearts
+
+- **Masalah:** console melaporkan `A tree hydrated but some attributes of the
+  server rendered HTML didn't match the client properties` pada `FloatingHearts`.
+  Catatan verifikasi sebelumnya ("headless tanpa error hydration") ternyata
+  keliru — error ini nyata dan terulang di dev maupun build.
+- **Akar masalah:** bukan nilai partikelnya (fungsi `pseudoRandom` sudah
+  deterministik dan hasil server = browser), melainkan **presisi penulisan**.
+  Browser memotong angka panjang jadi ~6 angka penting saat menyimpan gaya,
+  sehingga `left: "5.721816935692914%"` tersimpan sebagai `5.72182%`, dan
+  `width: 22.574022882356076` (angka telanjang) tersimpan sebagai `"22.574px"`.
+  React membandingkan nilai yang ia tulis dengan yang ada di DOM, melihat beda,
+  lalu melaporkan mismatch.
+- **Perbaikan (`src/components/FloatingHearts.tsx`):** nilai `left` dan `size`
+  dibulatkan 2 desimal lewat `bulat()` sebelum ditulis, dan satuan `px` ditulis
+  eksplisit sebagai teks (bukan angka telanjang). Tidak ada perubahan tampilan.
+- **Bukti:** setelah muat ulang, console **0 error**; 18 partikel tetap
+  dirender (6 terlihat di layar HP), posisinya bergerak; `npm test` 7/7;
+  lint bersih; `npm run build` PASS.
+- **Peringatan lain di console — hasil penyelidikan:**
+  - 3 font preload "tidak terpakai" dan petunjuk `loading="eager"` untuk LCP
+    **hanya muncul di mode dev**. Dibuktikan: pada hasil `npm run build` yang
+    disajikan sebagai berkas statis, console **bersih** tanpa keduanya. Penyebab
+    di dev: indikator dev Next.js memuat fontnya sendiri (`__nextjs-Geist`) dan
+    pemuatan lebih lambat, sehingga Chrome menganggap preload font belum
+    terpakai dalam beberapa detik. **Tidak ada kode yang perlu diubah.**
+  - Keempat bobot Poppins (300/400/500/600) **semuanya terpakai**, jadi tidak
+    ada yang bisa dihapus. Bobot 600 dipakai cap dekoratif di dalam buku nikah
+    (`MarriageBook.tsx` baris 241, memakai font body) — baru dirender setelah
+    buku dibuka, makanya tampak "unloaded" saat buku masih tertutup.
+  - Peringatan Chrome "Lazy-loaded images should have explicit dimensions
+    (count: 10)": gambar galeri **sudah** punya `width`/`height` dari manifest
+    dan CLS-nya memang sudah baik (0,0315; ambang "baik" 0,1) — jadi ini bukan
+    masalah tata letak. Tetapi Chrome ternyata menuntut rasio ditulis
+    **eksplisit** di CSS, bukan yang dihitung otomatis dari atribut
+    (`auto 900 / 1600` dianggap belum cukup). **Perbaikan:** tambahkan
+    `style={{ aspectRatio: ... }}` pada `Image` di `Gallery.tsx`.
+    Hasilnya CLS **0** dan console produksi **benar-benar bersih (0 pesan)**.
+    Foto buku nikah tidak perlu diubah karena wadahnya sudah ber-`aspect-[3/4]`.
+- Setelah semua perbaikan: `npm test` 7/7, lint bersih, `npm run build` PASS,
+  console produksi 0 pesan, CLS 0.

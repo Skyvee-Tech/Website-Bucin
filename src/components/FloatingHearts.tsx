@@ -21,13 +21,25 @@ function pseudoRandom(seed: number): number {
   return x - Math.floor(x);
 }
 
+// Membulatkan angka supaya nilai yang ditulis ke HTML SAMA PERSIS dengan yang
+// dibaca kembali oleh browser.
+//
+// Kenapa perlu? Browser memotong angka panjang jadi ~6 angka penting saat
+// menyimpan nilai gaya: "5.721816935692914%" tersimpan sebagai "5.72182%".
+// React lalu membandingkan nilai yang ia tulis dengan yang ada di DOM, melihat
+// beda, dan melaporkan error hydration (#418). Dibulatkan 2 desimal, nilainya
+// tidak lagi dipotong browser.
+function bulat(n: number, desimal = 2): number {
+  return Number(n.toFixed(desimal));
+}
+
 const MOBILE_VISIBLE = 6; // jumlah partikel di layar kecil
 const TOTAL = 18; // jumlah partikel di layar besar
 
 // Dibuat sekali di level modul (bukan saat render).
 const PARTICLES = Array.from({ length: TOTAL }, (_, i) => ({
-  left: pseudoRandom(i + 1) * 100,
-  size: 12 + pseudoRandom(i + 21) * 16,
+  left: bulat(pseudoRandom(i + 1) * 100),
+  size: bulat(12 + pseudoRandom(i + 21) * 16),
   duration: 9 + pseudoRandom(i + 41) * 8,
   delay: pseudoRandom(i + 61) * 8,
   opacity: 0.25 + pseudoRandom(i + 81) * 0.4,
@@ -61,8 +73,11 @@ export default function FloatingHearts() {
           style={{
             left: `${p.left}%`,
             bottom: "-8%",
-            width: p.size,
-            height: p.size,
+            // Satuan ditulis eksplisit ("px"). Kalau hanya angka telanjang,
+            // React menulis "22.57" sementara browser menyimpannya sebagai
+            // "22.57px" - perbedaan itu juga memicu error hydration.
+            width: `${p.size}px`,
+            height: `${p.size}px`,
             color: i % 2 === 0 ? "#ec4899" : "#f9a8d4",
           }}
           initial={{ y: 0, opacity: 0 }}
