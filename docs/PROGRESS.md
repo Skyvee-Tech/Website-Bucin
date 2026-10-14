@@ -215,3 +215,7 @@ Konten personal hanya ada di `src/content/site.ts`.
 - Logo tab: `src/app/icon.svg` — huruf **"S"** ber-gradasi rose→emas di badge
   plum berbingkai emas (vektor, tajam di semua ukuran). Favicon bawaan Next
   (`src/app/favicon.ico`, kotak hitam "N") DIHAPUS supaya logo ini yang dipakai.
+- Ikon iOS ("Add to Home Screen"): `src/app/apple-icon.png` (180x180, persegi
+  penuh tanpa transparansi & tanpa bingkai — iOS membulatkan sudutnya sendiri).
+  Dibuat ulang lewat **`npm run apple-icon`** (`scripts/make-apple-icon.mjs`,
+  memakai `sharp`).
