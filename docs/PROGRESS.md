@@ -170,3 +170,25 @@ Konten personal hanya ada di `src/content/site.ts`.
   menyediakan emulasi; dicek lewat aturan CSS yang mematikan transisi + toggle
   yang tidak bergantung animasi). Catatan: `theme-color` (bilah browser)
   mengikuti setelan sistem, bukan pilihan manual user.
+- **Tombol tema dipindah** ke kanan-bawah, bersebelahan dengan tombol musik
+  (pembungkus `FloatingControls`; `z-[51]` sehingga tetap di atas gerbang).
+- **Player musik** (`MusicPanel` + `MusicButton`): tombol bulat membuka panel
+  berisi cover art, judul/artis, geser posisi, dan prev/play/next. State pemutar
+  ada di `AudioProvider` (playlist, indeks, waktu, MediaSession).
+- **Daftar lagu**: `site.playlist` (array). Satu entri = tombol maju/mundur
+  nonaktif. Judul/artis/cover dibaca dari **tag ID3** file mp3 oleh
+  `src/lib/id3.ts` (fungsi murni, + `id3.test.ts`) dan `src/lib/trackMeta.ts`
+  (unduh hanya byte tag lewat streaming, bukan seluruh file). Tanpa dependency
+  baru. Kalau mp3 tidak punya gambar (`APIC`), panel menampilkan ikon hati.
+  Catatan: `lagu.mp3` saat ini TIDAK punya `APIC`, jadi cover belum tampil.
+- Pelajaran: listener event audio yang dipasang di `useEffect` bisa kalah balap
+  dengan `loadedmetadata` (duration terbaca 0). Solusi: pakai event handler
+  React langsung pada elemen `<audio>`.
+- **Slider posisi musik diperbaiki**: dulu pakai `h-1` (area sentuh 4px) sehingga
+  thumb gepeng & susah digeser, dan nilai ter-controlled `currentTime` menarik
+  thumb kembali. Sekarang kelas `.music-range` (track tipis + thumb 16px, area
+  sentuh 28px) + state `scrub` (nilai ditahan saat digeser, seek saat dilepas).
+- **Catatan alat uji (penting):** server statis pratinjau untuk folder `out/`
+  HARUS mendukung **HTTP Range**. Kalau tidak, Chrome menandai audio
+  `seekable=[0,0]` dan geser posisi tampak rusak padahal aplikasinya benar.
+  GitHub Pages & `next dev` sudah mendukung Range.

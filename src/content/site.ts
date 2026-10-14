@@ -59,9 +59,11 @@ export type SiteContent = {
   letter: string;
   letterSignature: string; // tanda tangan di akhir surat
   marriageBook: MarriageBook;
-  quotes: Quotes; // section "Kata-kata"
+  quotes: Quotes; // section "Kata-kata" (kini di dalam Surat untukmu)
   closingLetter: string[]; // teks penutup di akhir halaman (per paragraf)
-  musicSrc: string;
+  // Daftar lagu (file .mp3 di /public/music). Judul/artis/cover dibaca dari tag
+  // ID3 masing-masing file. Satu entri = tombol maju/mundur dinonaktifkan.
+  playlist: string[];
 };
 
 // ---------------------------------------------------------------------------
@@ -167,8 +169,9 @@ export const site: SiteContent = {
     "Hard work don't scare me. I'll get my hands dirty, bleed a little, sweat a lot, and still won't quit. That's just me. Built to grind, build to endure, built to never give up.",
   ],
 
-  // File musik latar. Ganti dengan file mp3 milikmu di public/music/.
-  musicSrc: "/music/lagu.mp3",
+  // Daftar lagu latar (file .mp3 di public/music/). Tambah entri baru kalau
+  // mau lebih dari satu lagu — tombol maju/mundur otomatis aktif.
+  playlist: ["/music/lagu.mp3"],
 };
 
 export default site;

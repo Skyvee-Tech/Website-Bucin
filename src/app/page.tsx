@@ -1,7 +1,6 @@
 import AudioProvider from "@/components/AudioProvider";
 import OpenGate from "@/components/OpenGate";
-import MusicButton from "@/components/MusicButton";
-import ThemeToggle from "@/components/ThemeToggle";
+import FloatingControls from "@/components/FloatingControls";
 import Hero from "@/components/Hero";
 import WordMarquee from "@/components/WordMarquee";
 import Countdown from "@/components/Countdown";
@@ -31,11 +30,9 @@ export default function Home() {
         <LoveLetter />
       </main>
 
-      {/* Overlay & kontrol audio */}
+      {/* Overlay & kontrol melayang (tema + musik) */}
       <OpenGate />
-      <MusicButton />
-      {/* Tombol tema ditaruh di atas gate (z-51) agar bisa dipakai kapan saja. */}
-      <ThemeToggle />
+      <FloatingControls />
     </AudioProvider>
   );
 }

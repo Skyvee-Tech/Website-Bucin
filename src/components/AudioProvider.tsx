@@ -11,23 +11,33 @@ import {
 } from "react";
 import { site } from "@/content/site";
 import { withBase } from "@/lib/withBase";
+import { loadTrackMeta, type TrackMeta } from "@/lib/trackMeta";
 
 // ---------------------------------------------------------------------------
-// AudioProvider — satu elemen <audio> global yang dibagi ke seluruh halaman.
+// AudioProvider — satu elemen <audio> global + state pemutar (playlist).
 // ---------------------------------------------------------------------------
-// Kenapa lewat Context? Supaya layar pembuka (gate) dan tombol mute melayang
-// mengendalikan elemen audio yang SAMA, tanpa masing-masing punya player sendiri.
+// Dipakai bersama oleh gerbang pembuka (mulai musik) dan panel pemutar
+// (play/pause, maju/mundur, geser posisi, judul/artis/cover dari tag ID3).
 
 type AudioContextValue = {
-  started: boolean; // apakah musik sudah mulai diputar
-  muted: boolean; // status bisu
-  start: () => void; // mulai putar + fade-in (HARUS dipanggil dari tap user)
-  toggleMute: () => void;
+  started: boolean; // musik sudah dinyalakan lewat gerbang
+  playing: boolean;
+  index: number;
+  total: number;
+  hasPrev: boolean;
+  hasNext: boolean;
+  currentTime: number;
+  duration: number;
+  meta: TrackMeta | null;
+  start: () => void; // mulai putar + fade-in (HARUS dari tap user)
+  togglePlay: () => void;
+  next: () => void;
+  prev: () => void;
+  seek: (seconds: number) => void;
 };
 
 const AudioCtx = createContext<AudioContextValue | null>(null);
 
-// Hook untuk mengambil state audio dari context.
 export function useAudio(): AudioContextValue {
   const ctx = useContext(AudioCtx);
   if (!ctx) {
@@ -36,19 +46,37 @@ export function useAudio(): AudioContextValue {
   return ctx;
 }
 
-const TARGET_VOLUME = 0.6; // volume awal yang dituju (soal spec: 0.6)
+const TARGET_VOLUME = 0.6;
 
 export default function AudioProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const tracks = useMemo(() => site.playlist.map((p) => withBase(p)), []);
+  const total = tracks.length;
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fadeRef = useRef<number | null>(null);
-  const [started, setStarted] = useState(false);
-  const [muted, setMuted] = useState(false);
+  const coverRef = useRef<string | null>(null);
+  // Ref untuk dibaca di dalam efek tanpa memicu dependensi ulang.
+  const startedRef = useRef(false);
+  const playingRef = useRef(false);
 
-  // Hentikan proses fade kalau masih berjalan.
+  const [started, setStarted] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  // Metadata disimpan bersama src-nya, supaya tidak perlu setState saat ganti lagu.
+  const [trackMeta, setTrackMeta] = useState<{
+    src: string;
+    data: TrackMeta;
+  } | null>(null);
+
+  const src = tracks[index] ?? "";
+  const meta = trackMeta && trackMeta.src === src ? trackMeta.data : null;
+
   const stopFade = useCallback(() => {
     if (fadeRef.current !== null) {
       window.clearInterval(fadeRef.current);
@@ -56,20 +84,16 @@ export default function AudioProvider({
     }
   }, []);
 
-  // Dipanggil saat user mengetuk gate. Ini WAJIB berasal dari interaksi user,
-  // kalau tidak browser akan memblokir autoplay.
+  // Dipicu dari tap gerbang. WAJIB dari interaksi user (autoplay diblokir).
   const start = useCallback(() => {
     const audio = audioRef.current;
     if (!audio || started) return;
 
     audio.volume = 0;
-    // play() bisa ditolak (diblokir). Tangani promise-nya agar tidak error.
     const playPromise = audio.play();
     if (playPromise) playPromise.catch(() => {});
-
     setStarted(true);
 
-    // Fade-in volume dari 0 -> 0.6 secara halus.
     stopFade();
     fadeRef.current = window.setInterval(() => {
       const a = audioRef.current;
@@ -77,26 +101,146 @@ export default function AudioProvider({
         stopFade();
         return;
       }
-      const next = Math.min(TARGET_VOLUME, a.volume + 0.03);
-      a.volume = next;
-      if (next >= TARGET_VOLUME) stopFade();
+      const nextVolume = Math.min(TARGET_VOLUME, a.volume + 0.03);
+      a.volume = nextVolume;
+      if (nextVolume >= TARGET_VOLUME) stopFade();
     }, 50);
   }, [started, stopFade]);
 
-  const toggleMute = useCallback(() => {
+  const togglePlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const next = !audio.muted;
-    audio.muted = next;
-    setMuted(next);
+    if (!started) {
+      start();
+      return;
+    }
+    if (audio.paused) {
+      const p = audio.play();
+      if (p) p.catch(() => {});
+    } else {
+      audio.pause();
+    }
+  }, [started, start]);
+
+  const goto = useCallback(
+    (delta: number) => {
+      if (total <= 1) return;
+      setIndex((i) => (i + delta + total) % total);
+      setCurrentTime(0);
+      setDuration(0);
+    },
+    [total],
+  );
+  const next = useCallback(() => goto(1), [goto]);
+  const prev = useCallback(() => goto(-1), [goto]);
+
+  const seek = useCallback((seconds: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = seconds;
+    setCurrentTime(seconds);
   }, []);
 
-  // Bersihkan interval saat komponen dilepas.
-  useEffect(() => stopFade, [stopFade]);
+  // Samakan durasi dari elemen audio. Dipanggil dari event handler (bukan efek),
+  // supaya tidak ada race saat event "loadedmetadata" sudah lewat lebih dulu.
+  const syncDuration = useCallback((el: HTMLAudioElement) => {
+    setDuration(Number.isFinite(el.duration) ? el.duration : 0);
+  }, []);
 
-  const value = useMemo(
-    () => ({ started, muted, start, toggleMute }),
-    [started, muted, start, toggleMute],
+  const onEnded = useCallback(() => {
+    if (total > 1) {
+      setIndex((i) => (i + 1) % total);
+      setCurrentTime(0);
+      setDuration(0);
+    }
+  }, [total]);
+
+  // Jaga ref tetap terbaru (tanpa memicu efek lain).
+  useEffect(() => {
+    startedRef.current = started;
+  }, [started]);
+  useEffect(() => {
+    playingRef.current = playing;
+  }, [playing]);
+
+  // Ganti lagu: mulai dari awal, lanjut putar kalau sebelumnya berjalan.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    if (startedRef.current && playingRef.current) {
+      const p = audio.play();
+      if (p) p.catch(() => {});
+    }
+  }, [index]);
+
+  // Baca tag ID3 lagu aktif -> judul/artis/cover + metadata MediaSession (OS).
+  useEffect(() => {
+    let cancelled = false;
+    loadTrackMeta(src)
+      .then((m) => {
+        if (cancelled) {
+          if (m.coverUrl) URL.revokeObjectURL(m.coverUrl);
+          return;
+        }
+        if (coverRef.current) URL.revokeObjectURL(coverRef.current);
+        coverRef.current = m.coverUrl;
+        setTrackMeta({ src, data: m });
+        if (typeof navigator !== "undefined" && "mediaSession" in navigator) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: m.title ?? "Lagu",
+            artist: m.artist ?? "",
+            album: m.album ?? "",
+            artwork: m.coverUrl ? [{ src: m.coverUrl }] : [],
+          });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
+
+  // Bersihkan interval fade & object URL cover saat provider dilepas.
+  useEffect(() => stopFade, [stopFade]);
+  useEffect(
+    () => () => {
+      if (coverRef.current) URL.revokeObjectURL(coverRef.current);
+    },
+    [],
+  );
+
+  const value = useMemo<AudioContextValue>(
+    () => ({
+      started,
+      playing,
+      index,
+      total,
+      hasPrev: total > 1,
+      hasNext: total > 1,
+      currentTime,
+      duration,
+      meta,
+      start,
+      togglePlay,
+      next,
+      prev,
+      seek,
+    }),
+    [
+      started,
+      playing,
+      index,
+      total,
+      currentTime,
+      duration,
+      meta,
+      start,
+      togglePlay,
+      next,
+      prev,
+      seek,
+    ],
   );
 
   return (
@@ -104,9 +248,20 @@ export default function AudioProvider({
       {children}
       <audio
         ref={audioRef}
-        src={withBase(site.musicSrc)}
-        loop
+        src={src}
+        loop={total <= 1}
         preload="auto"
+        onPlay={(e) => {
+          setPlaying(true);
+          syncDuration(e.currentTarget);
+        }}
+        onPause={() => setPlaying(false)}
+        onTimeUpdate={(e) => {
+          setCurrentTime(e.currentTarget.currentTime);
+          syncDuration(e.currentTarget);
+        }}
+        onLoadedMetadata={(e) => syncDuration(e.currentTarget)}
+        onEnded={onEnded}
       />
     </AudioCtx.Provider>
   );

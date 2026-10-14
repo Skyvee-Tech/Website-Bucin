@@ -3,13 +3,13 @@
 import { toggleTheme, useTheme } from "@/lib/useTheme";
 
 // ---------------------------------------------------------------------------
-// ThemeToggle — tombol bulat (kanan atas) pengubah mode terang/gelap.
+// ThemeToggle — tombol bulat pengubah mode terang/gelap (ikon vektor).
 // ---------------------------------------------------------------------------
 // Ikon ditampilkan lewat CSS berdasarkan data-theme, jadi ikon yang benar
 // sudah tampil sejak frame pertama (tanpa kedip, tanpa menunggu hydration).
 // aria-pressed/aria-label diambil dari useTheme agar pembaca layar tahu status.
-// Posisi kanan-atas sengaja dipilih supaya tidak bertabrakan dengan tombol
-// musik yang ada di kanan-bawah.
+// Posisi diatur oleh pembungkusnya (FloatingControls) — bersebelahan dengan
+// tombol musik di kanan-bawah.
 export default function ThemeToggle() {
   const dark = useTheme() === "dark";
 
@@ -19,11 +19,7 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       aria-pressed={dark}
       aria-label={dark ? "Aktifkan mode terang" : "Aktifkan mode gelap"}
-      className="fixed z-[51] flex h-12 w-12 items-center justify-center rounded-full border border-border bg-card/80 text-primary shadow-lg backdrop-blur-md transition-transform duration-200 active:scale-95"
-      style={{
-        right: "calc(1rem + env(safe-area-inset-right))",
-        top: "calc(1rem + env(safe-area-inset-top))",
-      }}
+      className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-card/80 text-primary shadow-lg backdrop-blur-md transition-transform duration-200 active:scale-95"
     >
       {/* Bulan sabit — tampil di mode terang. */}
       <svg

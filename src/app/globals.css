@@ -80,6 +80,42 @@ html[data-theme="dark"] {
   border-color: var(--book-edge);
 }
 
+/* Slider posisi musik: track tipis tapi area sentuh & thumb cukup besar,
+   supaya mudah digeser di HP. Warna ikut token tema. */
+.music-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1.75rem;
+  background: transparent;
+  cursor: pointer;
+}
+.music-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-border);
+}
+.music-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+}
+.music-range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-border);
+}
+.music-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--color-primary);
+}
+
 html {
   /* Cegah iOS memperbesar teks otomatis saat orientasi berubah. */
   -webkit-text-size-adjust: 100%;

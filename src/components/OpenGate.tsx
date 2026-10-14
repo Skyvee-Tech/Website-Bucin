@@ -50,7 +50,6 @@ export default function OpenGate() {
           <motion.button
             type="button"
             onClick={handleOpen}
-            aria-label="Buka halaman dan putar musik"
             className="group flex w-full max-w-sm flex-col items-center gap-5 rounded-[2rem] border border-border bg-card/70 px-8 py-10 text-center shadow-[0_20px_60px_-20px_rgba(190,24,93,0.35)] backdrop-blur-md transition-transform duration-200 active:scale-[0.98]"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
