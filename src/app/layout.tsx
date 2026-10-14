@@ -30,7 +30,7 @@ const siteOrigin =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin),
-  title: "Untuk Kamu",
+  title: "Skyvee Tech",
   description: "Sebuah halaman kecil yang dibuat khusus untuk seseorang yang spesial.",
   // Halaman ini bersifat pribadi — minta mesin pencari TIDAK mengindeksnya.
   robots: { index: false, follow: false },

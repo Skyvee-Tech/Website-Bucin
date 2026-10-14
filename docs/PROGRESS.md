@@ -206,3 +206,12 @@ Konten personal hanya ada di `src/content/site.ts`.
   di `layout.tsx`. **Penting:** `metadataBase` memakai **origin saja** —
   Next menambahkan base path sendiri ke aset metadata, kalau dobel URL-nya rusak.
   Gambar dibuat ulang lewat `scripts/og-card.html` (render 1200x630 di browser).
+
+## Judul tab & logo (favicon)
+
+- Judul tab dokumen: **"Skyvee Tech"** (`metadata.title`). Judul pratinjau share
+  (`openGraph`/`twitter`) sengaja **tetap "Untuk Kamu"** supaya selaras dengan
+  gambar OG-nya.
+- Logo tab: `src/app/icon.svg` — huruf **"S"** ber-gradasi rose→emas di badge
+  plum berbingkai emas (vektor, tajam di semua ukuran). Favicon bawaan Next
+  (`src/app/favicon.ico`, kotak hitam "N") DIHAPUS supaya logo ini yang dipakai.
