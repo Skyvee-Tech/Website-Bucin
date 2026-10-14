@@ -18,12 +18,6 @@ import SectionReveal from "./SectionReveal";
 
 const GOLD = "#d4af37";
 
-// Tekstur kertas krem (gradien CSS, tanpa gambar eksternal).
-const paperStyle: React.CSSProperties = {
-  backgroundImage:
-    "repeating-linear-gradient(0deg, rgba(138,106,31,0.035) 0 2px, transparent 2px 5px), radial-gradient(120% 120% at 0% 0%, #fffdf7 0%, #fbf3e3 55%, #f6ecd7 100%)",
-};
-
 // Efek emas timbul (gold foil) untuk teks.
 const goldFoilStyle: React.CSSProperties = {
   backgroundImage:
@@ -138,11 +132,11 @@ export default function MarriageBook() {
           style={{ perspective: "1600px" }}
         >
           <div className="relative">
-            {/* Isi buku (dua halaman) */}
+            {/* Isi buku (dua halaman). Kelas .book-paper mengatur warna kertas
+                dari token tema (terang = krem, gelap = cokelat tua). */}
             <div
               id="buku-nikah-isi"
-              className="relative grid grid-cols-1 overflow-hidden rounded-2xl border border-[#e6d6a8] md:grid-cols-2"
-              style={paperStyle}
+              className="book-paper relative grid grid-cols-1 overflow-hidden rounded-2xl border md:grid-cols-2"
             >
               <Page person={book.left} />
               <Page person={book.right} />

@@ -73,6 +73,11 @@ Konten personal hanya ada di `src/content/site.ts`.
   per paragraf; tanda tangan + footer tetap menampilkan nama pengirim.
 - Verifikasi ini: `npm test` 7/7, lint bersih, build PASS; headless tanpa error
   hydration; detik berdetak; buku `aria-expanded=true`.
+- Section "Kata-kata" & "Penutup" DIHAPUS; seluruh teksnya digabung ke satu
+  section **"Surat untukmu"** (`LoveLetter.tsx`): surat Indonesia (typewriter)
+  → 2 kutipan → surat penutup Inggris → tanda tangan → footer. Kutipan kedua
+  tetap dipecah per kalimat (muncul bertahap). Komponen `KataKata.tsx` &
+  `Closing.tsx` dihapus; `page.tsx` kini berakhir di `<LoveLetter />`.
 
 ## Status fase
 
@@ -125,3 +130,43 @@ Konten personal hanya ada di `src/content/site.ts`.
     Foto buku nikah tidak perlu diubah karena wadahnya sudah ber-`aspect-[3/4]`.
 - Setelah semua perbaikan: `npm test` 7/7, lint bersih, `npm run build` PASS,
   console produksi 0 pesan, CLS 0.
+
+## Mode gelap/terang (toggle ikon vektor)
+
+- Tombol bulat **kanan-atas**, ikon SVG vektor (bulan sabit saat terang,
+  matahari saat gelap), bukan emoji. Selalu tampil, **termasuk sebelum gerbang
+  dibuka** (z-51 di atas gate z-50); tidak bertabrakan dengan tombol musik
+  (kanan-bawah).
+- **Tanpa dependency baru** (bukan `next-themes`). Logika murni
+  `src/lib/theme.ts` (+ test `node:test`), hook aman-hydration
+  `src/lib/useTheme.ts` (pola `useSyncExternalStore`, sama seperti
+  `useReducedMotionSafe`), komponen `src/components/ThemeToggle.tsx`.
+- Tema disimpan di `localStorage["theme"]` ("light"|"dark"); kalau belum ada,
+  ikut `prefers-color-scheme`. Pilihan manual menang atas sistem.
+- Ikon ditampilkan lewat CSS berdasarkan `data-theme` (bukan state React), jadi
+  ikon benar sudah tampil sejak frame pertama. `aria-pressed`/`aria-label`
+  diambil dari hook (snapshot server "light") supaya tidak ada error hydration.
+- **Anti-kedip:** skrip inline sinkron di awal `<body>` (`layout.tsx`)
+  menetapkan `data-theme` **sebelum konten dilukis**; `<html>` pakai
+  `suppressHydrationWarning`. Diukur dgn throttle Slow 3G: frame render pertama
+  sudah gelap, **0 frame putih**.
+- Tailwind v4 (tanpa `tailwind.config.js`): `@custom-variant dark
+  (&:where([data-theme="dark"], [data-theme="dark"] *))` + timpa token `@theme`
+  di `html[data-theme="dark"]`; `color-scheme` diatur per tema. Permukaan
+  `bg-white/*` -> `bg-card/*`; glow `#ffe4ef` -> token `--color-glow`.
+- Palet gelap: bg `#1b1218`, fg `#f3e8ee`, primary `#f472b6`, secondary
+  `#f9a8d4`, accent `#e0c06a`, card `#241820`, muted `#2a1d25`, border `#3f2c37`.
+  Kontras teks (dihitung): fg 15.34, primary 6.92, accent 10.40 — semua >= 4.5:1.
+  Lighthouse accessibility **100** & audit `color-contrast` lulus di kedua tema.
+- **Buku nikah ikut tema:** warna kertas jadi token `--book-*` + kelas
+  `.book-paper` (mode terang tetap krem persis seperti sebelumnya; mode gelap
+  jadi cokelat tua `#33291c/#2a2116/#241c12`). Memperbaiki teks tempat/tanggal
+  lahir yang sebelumnya hilang di mode gelap (sekarang kontras 6.65–7.51:1).
+  Bingkai/sudut emas, foil, dan sampul dibiarkan (memang objek fisik).
+- Verifikasi: lint bersih, `npm test` **11/11**, `npm run build` PASS; console
+  produksi **0 pesan** pada 360/390/768/1280 (tanpa scroll horizontal, tombol
+  48x48 di dalam viewport).
+- Belum diverifikasi dgn emulasi nyata: `prefers-reduced-motion` (tool tidak
+  menyediakan emulasi; dicek lewat aturan CSS yang mematikan transisi + toggle
+  yang tidak bergantung animasi). Catatan: `theme-color` (bilah browser)
+  mengikuti setelan sistem, bukan pilihan manual user.

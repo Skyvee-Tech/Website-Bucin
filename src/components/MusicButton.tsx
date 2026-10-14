@@ -16,7 +16,7 @@ export default function MusicButton() {
       onClick={toggleMute}
       aria-pressed={muted}
       aria-label={muted ? "Nyalakan musik" : "Matikan musik"}
-      className="fixed z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-white/80 text-primary shadow-lg backdrop-blur-md transition-transform duration-200 active:scale-95"
+      className="fixed z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-card/80 text-primary shadow-lg backdrop-blur-md transition-transform duration-200 active:scale-95"
       style={{
         right: "calc(1rem + env(safe-area-inset-right))",
         bottom: "calc(1rem + env(safe-area-inset-bottom))",

@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Varian `dark:` mengikuti atribut data-theme di <html>, bukan setelan sistem.
+   Tidak ada tailwind.config.js — semua konfigurasi lewat CSS (Tailwind v4). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* ===========================================================================
    TOKEN DESAIN (Tailwind CSS v4)
    Palet rose/blush/krem + aksen emas. Nilai ini yang dipakai di seluruh
@@ -15,6 +19,7 @@
   --color-muted: #fbf1f5; /* latar kartu lembut */
   --color-card: #ffffff;
   --color-border: #f7e3eb; /* garis tipis */
+  --color-glow: #ffe4ef; /* glow pink lembut di latar atas */
 }
 
 /* Font dari next/font dipasang sebagai CSS variable di <html> (lihat layout.tsx). */
@@ -24,8 +29,55 @@
 }
 
 :root {
-  /* Halaman ini selalu terang (tidak ada mode gelap). */
+  /* Default terang; atribut data-theme (di <html>) menimpanya bila gelap. */
   color-scheme: light;
+  /* Kertas "Buku Nikah Kita" (mode terang): krem hangat, seperti semula. */
+  --book-paper-1: #fffdf7;
+  --book-paper-2: #fbf3e3;
+  --book-paper-3: #f6ecd7;
+  --book-line: rgba(138, 106, 31, 0.035);
+  --book-edge: #e6d6a8;
+}
+
+/* ===========================================================================
+   MODE GELAP
+   Menimpa token warna ketika <html> punya data-theme="dark". Karena semua
+   utility mengacu ke var(--color-*), satu blok ini membalik seluruh halaman.
+   Kontras teks (diukur, WCAG): foreground 15.34, primary 6.92, accent 10.40
+   — semuanya >= 4.5:1 di atas latar gelap.
+   =========================================================================== */
+html[data-theme="dark"] {
+  --color-background: #1b1218; /* plum sangat gelap */
+  --color-foreground: #f3e8ee; /* hampir putih, semburat plum */
+  --color-primary: #f472b6; /* rose terang (judul/aksen) */
+  --color-primary-foreground: #2a0a1a;
+  --color-secondary: #f9a8d4; /* pink untuk gradien/highlight */
+  --color-accent: #e0c06a; /* emas diperterang agar tetap kontras */
+  --color-muted: #2a1d25; /* latar kartu lembut */
+  --color-card: #241820;
+  --color-border: #3f2c37; /* garis tipis */
+  --color-glow: #3a1526; /* glow rose gelap di latar atas */
+  /* Kertas buku nikah (mode gelap): cokelat tua, tidak menyilaukan. */
+  --book-paper-1: #33291c;
+  --book-paper-2: #2a2116;
+  --book-paper-3: #241c12;
+  --book-line: rgba(212, 175, 55, 0.05);
+  --book-edge: #6f5a2a;
+  color-scheme: dark;
+}
+
+/* Kertas "Buku Nikah Kita". Warna diambil dari token --book-* di atas, jadi
+   otomatis ikut mode terang/gelap tanpa mengubah tampilan mode terang. */
+.book-paper {
+  background-image:
+    repeating-linear-gradient(0deg, var(--book-line) 0 2px, transparent 2px 5px),
+    radial-gradient(
+      120% 120% at 0% 0%,
+      var(--book-paper-1) 0%,
+      var(--book-paper-2) 55%,
+      var(--book-paper-3) 100%
+    );
+  border-color: var(--book-edge);
 }
 
 html {
@@ -36,7 +88,7 @@ html {
 body {
   /* Latar krem + glow pink lembut di bagian atas. */
   background:
-    radial-gradient(1200px 600px at 50% -10%, #ffe4ef 0%, transparent 60%),
+    radial-gradient(1200px 600px at 50% -10%, var(--color-glow) 0%, transparent 60%),
     var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-body), system-ui, sans-serif;

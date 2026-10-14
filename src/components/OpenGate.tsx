@@ -41,7 +41,7 @@ export default function OpenGate() {
             paddingLeft: "calc(1.5rem + env(safe-area-inset-left))",
             paddingRight: "calc(1.5rem + env(safe-area-inset-right))",
             background:
-              "radial-gradient(1200px 700px at 50% -10%, #ffe4ef 0%, transparent 60%), var(--color-background)",
+              "radial-gradient(1200px 700px at 50% -10%, var(--color-glow) 0%, transparent 60%), var(--color-background)",
           }}
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.04 }}
@@ -51,7 +51,7 @@ export default function OpenGate() {
             type="button"
             onClick={handleOpen}
             aria-label="Buka halaman dan putar musik"
-            className="group flex w-full max-w-sm flex-col items-center gap-5 rounded-[2rem] border border-border bg-white/70 px-8 py-10 text-center shadow-[0_20px_60px_-20px_rgba(190,24,93,0.35)] backdrop-blur-md transition-transform duration-200 active:scale-[0.98]"
+            className="group flex w-full max-w-sm flex-col items-center gap-5 rounded-[2rem] border border-border bg-card/70 px-8 py-10 text-center shadow-[0_20px_60px_-20px_rgba(190,24,93,0.35)] backdrop-blur-md transition-transform duration-200 active:scale-[0.98]"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
@@ -69,22 +69,22 @@ export default function OpenGate() {
                   width="116"
                   height="72"
                   rx="10"
-                  fill="#fff"
-                  stroke="#f7e3eb"
+                  fill="var(--color-card)"
+                  stroke="var(--color-border)"
                   strokeWidth="2"
                 />
                 <path
                   d="M6 26 L64 60 L122 26"
-                  stroke="#be185d"
+                  stroke="var(--color-primary)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   fill="none"
                 />
-                <circle cx="64" cy="62" r="12" fill="#be185d" />
+                <circle cx="64" cy="62" r="12" fill="var(--color-primary)" />
                 <path
                   d="M64 68.5c-4.2-3-6.5-5-6.5-7.3a3.2 3.2 0 015.2-2.5c.5.4.9.8 1.3 1.4.4-.6.8-1 1.3-1.4a3.2 3.2 0 015.2 2.5c0 2.3-2.3 4.3-6.5 7.3z"
-                  fill="#fff"
+                  fill="var(--color-primary-foreground)"
                 />
               </svg>
             </span>

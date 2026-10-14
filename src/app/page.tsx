@@ -1,14 +1,13 @@
 import AudioProvider from "@/components/AudioProvider";
 import OpenGate from "@/components/OpenGate";
 import MusicButton from "@/components/MusicButton";
+import ThemeToggle from "@/components/ThemeToggle";
 import Hero from "@/components/Hero";
 import WordMarquee from "@/components/WordMarquee";
 import Countdown from "@/components/Countdown";
 import MarriageBook from "@/components/MarriageBook";
 import Gallery from "@/components/Gallery";
 import LoveLetter from "@/components/LoveLetter";
-import KataKata from "@/components/KataKata";
-import Closing from "@/components/Closing";
 import Divider from "@/components/Divider";
 import { site } from "@/content/site";
 
@@ -30,15 +29,13 @@ export default function Home() {
         <Gallery />
         <Divider />
         <LoveLetter />
-        <Divider />
-        <KataKata />
-        <Divider />
-        <Closing />
       </main>
 
       {/* Overlay & kontrol audio */}
       <OpenGate />
       <MusicButton />
+      {/* Tombol tema ditaruh di atas gate (z-51) agar bisa dipakai kapan saja. */}
+      <ThemeToggle />
     </AudioProvider>
   );
 }

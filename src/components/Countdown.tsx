@@ -14,7 +14,7 @@ import SectionReveal from "./SectionReveal";
 
 function Stat({ label, value }: { label: string; value: number | null }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-border bg-white/70 px-2 py-4 shadow-sm backdrop-blur-sm sm:px-3 sm:py-5">
+    <div className="flex flex-col items-center rounded-2xl border border-border bg-card/70 px-2 py-4 shadow-sm backdrop-blur-sm sm:px-3 sm:py-5">
       <span className="font-heading text-[clamp(1.75rem,8vw,3rem)] leading-none tabular-nums text-primary">
         {value === null ? "–" : value}
       </span>

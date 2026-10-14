@@ -38,16 +38,32 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#fff7fa",
+  // Warna bilah browser mengikuti setelan sistem (dua meta dengan media query).
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fff7fa" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1218" },
+  ],
 };
+
+// ---------------------------------------------------------------------------
+// SKRIP TEMA (anti-kedip)
+// ---------------------------------------------------------------------------
+// Dijalankan sinkron sebagai anak pertama <body>, SEBELUM konten dilukis, jadi
+// tema yang benar sudah terpasang saat frame pertama (tidak ada kedipan putih).
+// Logikanya cerminan dari resolveTheme() di src/lib/theme.ts (yang diuji).
+const themeInitScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)}catch(e){document.documentElement.setAttribute("data-theme","light")}})();`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="id"
       className={`${playfair.variable} ${poppins.variable} antialiased`}
+      // Skrip tema mengubah atribut data-theme di <html> sebelum hydration,
+      // jadi perbedaan atribut ini memang disengaja.
+      suppressHydrationWarning
     >
       <body className="min-h-[100dvh]">
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         {/* MotionProvider mengatur perilaku animasi global (lihat file-nya). */}
         <MotionProvider>{children}</MotionProvider>
       </body>
