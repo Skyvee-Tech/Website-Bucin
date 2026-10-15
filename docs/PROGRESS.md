@@ -219,3 +219,22 @@ Konten personal hanya ada di `src/content/site.ts`.
   penuh tanpa transparansi & tanpa bingkai — iOS membulatkan sudutnya sendiri).
   Dibuat ulang lewat **`npm run apple-icon`** (`scripts/make-apple-icon.mjs`,
   memakai `sharp`).
+
+## Ikon S gaya racing (revisi, pakai skill logo-design)
+
+- `src/app/icon.svg` sekarang: tile plum gelap (#1B1218) + huruf **S** yang
+  diambil sebagai **outline dari font** `RacingSportDisplay-q2o72.otf`
+  (diekstrak via `fontTools` → path, **bukan `<text>`**), diwarnai cream (#FFF7FA),
+  ada `<title>`. Audit `svg_audit.py`: 97/100, 2 warna, tanpa gradien.
+- **Small-size cut (disengaja):** huruf diberi `stroke-width="10"` (sewarna) karena
+  bentuk fontnya tipis di 16 px. Diuji: 0 = tipis, **10 = pas**, 18 = counter
+  menutup. Jadi ada 1 stroke di file — itu koreksi optis, bukan kecelakaan.
+- Alasan tidak pakai versi "bold rancangan sendiri": user memilih pakai font ini.
+- `apple-icon.png` kini **diturunkan dari `icon.svg`** (sumber tunggal) —
+  `scripts/make-apple-icon.mjs` membaca fill/path/stroke dari icon.svg.
+- `favicon.ico` DILEPAS: dengan basePath, file convention `app/favicon.ico` tidak
+  diberi `<link>` oleh Next, dan menaruh `icons` di `metadata` justru MENIMPA link
+  `icon.svg`/`apple-icon` (jangan diulang). Ikon tab mengandalkan `icon.svg`
+  (Chrome/Firefox/Safari 16+), apple-icon untuk iOS.
+- Lisensi: font itu **DEMO / personal use only** (fontspace, multypestudio).
+  Dipakai atas permintaan user untuk keperluan pribadi.

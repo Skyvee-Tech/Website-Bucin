@@ -1,45 +1,42 @@
 // ---------------------------------------------------------------------------
 // make-apple-icon — bikin src/app/apple-icon.png (ikon "Add to Home Screen" iOS)
 // ---------------------------------------------------------------------------
-// Ikon Apple harus: persegi penuh, TANPA transparansi, TANPA sudut membulat —
-// iOS yang membulatkan sendiri. Karena itu versi ini tidak memakai bingkai
-// emas (sudut bingkai akan terpotong oleh mask iOS).
-//
-// Jalankan: npm run apple-icon  (butuh devDependency `sharp`)
+// Sumber TUNGGAL bentuk ikon adalah `src/app/icon.svg`. Skrip ini membacanya
+// (fill, path huruf S, dan stroke penebalnya) lalu membuat versi untuk Apple:
+//   - persegi PENUH (tanpa sudut membulat) — iOS membulatkan sendiri,
+//   - TANPA transparansi (alpha dibuang).
+// Kalau ikon berubah: ubah icon.svg lalu jalankan `npm run apple-icon`.
 import sharp from "sharp";
-import { fileURLToPath } from "node:url";
+import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 32 32">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#33172a"/>
-      <stop offset="1" stop-color="#1b1218"/>
-    </linearGradient>
-    <linearGradient id="s" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#f9a8d4"/>
-      <stop offset="0.55" stop-color="#f472b6"/>
-      <stop offset="1" stop-color="#e0c06a"/>
-    </linearGradient>
-  </defs>
-  <rect width="32" height="32" fill="url(#bg)"/>
-  <path
-    d="M21.4 11.6C21.4 9 18.9 7.9 16.2 7.9C12.9 7.9 10.6 9.4 10.6 12.1C10.6 14.7 12.7 15.9 16 16.9C19.3 17.9 21.4 19.1 21.4 21.8C21.4 24.6 19.1 25.9 15.8 25.9C13.1 25.9 10.6 24.8 10.6 22.2"
-    fill="none"
-    stroke="url(#s)"
-    stroke-width="2.8"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+const iconPath = path.join(root, "src", "app", "icon.svg");
+const icon = fs.readFileSync(iconPath, "utf8");
+
+const grab = (re, fallback) => (re.exec(icon)?.[1] ?? fallback).trim();
+const tile = grab(/<rect[^>]*\sfill="(#[0-9A-Fa-f]{3,8})"/, "#1B1218");
+const letterPath = grab(/<path[^>]*\sd="([^"]+)"/, "");
+const letter = grab(/<path[^>]*\sfill="(#[0-9A-Fa-f]{3,8})"/, "#FFF7FA");
+const stroke = grab(/<path[^>]*\sstroke="(#[0-9A-Fa-f]{3,8})"/, letter);
+const strokeWidth = Number(grab(/<path[^>]*\sstroke-width="([\d.]+)"/, "0")) || 0;
+
+if (!letterPath) {
+  throw new Error('Tidak menemukan <path d="..."> di ' + iconPath);
+}
+
+// Stroke penebal (small-size cut) ikut dibawa agar ikon konsisten.
+const strokeAttrs =
+  strokeWidth > 0
+    ? ` stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="miter"`
+    : "";
+
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="${tile}"/>
+  <path d="${letterPath}" fill="${letter}"${strokeAttrs}/>
 </svg>`;
 
-const out = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "src",
-  "app",
-  "apple-icon.png",
-);
-
+const out = path.join(root, "src", "app", "apple-icon.png");
 await sharp(Buffer.from(svg)).removeAlpha().png().toFile(out);
-console.log("Wrote", out);
+console.log("Wrote", out, "| stroke", strokeWidth);
