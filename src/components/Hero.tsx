@@ -14,9 +14,11 @@ const container: Variants = {
   show: { transition: { staggerChildren: 0.15, delayChildren: 0.15 } },
 };
 
+// Animasi masuk hero: pakai transform SAJA (tanpa opacity) supaya teks sudah
+// terlihat sejak paint pertama — LCP tidak menunggu hydration/JS.
 const item: Variants = {
-  hidden: { opacity: 0, y: 22 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  hidden: { y: 22 },
+  show: { y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 };
 
 export default function Hero() {

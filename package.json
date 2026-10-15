@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "tsx --test src/lib/*.test.ts",
-    "apple-icon": "node scripts/make-apple-icon.mjs",
+    "icons": "node scripts/make-icons.mjs",
     "photos": "node scripts/optimize-photos.mjs"
   },
   "dependencies": {

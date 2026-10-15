@@ -1,6 +1,7 @@
 import AudioProvider from "@/components/AudioProvider";
 import OpenGate from "@/components/OpenGate";
 import FloatingControls from "@/components/FloatingControls";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import Hero from "@/components/Hero";
 import WordMarquee from "@/components/WordMarquee";
 import Countdown from "@/components/Countdown";
@@ -33,6 +34,8 @@ export default function Home() {
       {/* Overlay & kontrol melayang (tema + musik) */}
       <OpenGate />
       <FloatingControls />
+      {/* Daftarkan service worker (PWA) — hanya produksi, setelah load. */}
+      <ServiceWorkerRegister />
     </AudioProvider>
   );
 }

@@ -47,12 +47,14 @@ export default function OpenGate() {
           exit={{ opacity: 0, scale: 1.04 }}
           transition={{ duration: 0.7, ease: "easeInOut" }}
         >
+          {/* Tanpa opacity di initial: kartu sudah terlihat sejak paint pertama
+              (LCP tidak menunggu JS); animasi hanya transform. */}
           <motion.button
             type="button"
             onClick={handleOpen}
             className="group flex w-full max-w-sm flex-col items-center gap-5 rounded-[2rem] border border-border bg-card/70 px-8 py-10 text-center shadow-[0_20px_60px_-20px_rgba(190,24,93,0.35)] backdrop-blur-md transition-transform duration-200 active:scale-[0.98]"
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ y: 24, scale: 0.96 }}
+            animate={{ y: 0, scale: 1 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
             {/* Ilustrasi amplop sederhana (SVG, bukan emoji) */}

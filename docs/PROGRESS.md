@@ -238,3 +238,31 @@ Konten personal hanya ada di `src/content/site.ts`.
   (Chrome/Firefox/Safari 16+), apple-icon untuk iOS.
 - Lisensi: font itu **DEMO / personal use only** (fontspace, multypestudio).
   Dipakai atas permintaan user untuk keperluan pribadi.
+
+## Performa (LCP) & PWA
+
+- **Diukur dulu** (situs live, 390 px, CPU 4×, Slow 4G, cache dingin):
+  **LCP 2.889 ms**, **CLS 0,00**, TTFB 3 ms. Elemen LCP = `<h1>` nama; 99,9 %
+  waktunya "render delay". Penyebab: konten di atas layar dirender **`opacity: 0`**
+  oleh `motion`, baru muncul setelah JS diunduh + hydration + animasi.
+- **Perbaikan:** hilangkan `opacity` dari state awal animasi **di atas layar**
+  (`Hero` → `item.hidden = { y: 22 }`; kartu `OpenGate` → `initial = { y, scale }`).
+  Konten kini terlukis sejak paint pertama, animasi tetap jalan (transform).
+  Diukur ulang: delay **setelah CSS 2.886 ms → ~434 ms** (CLS tetap 0,00; sisa
+  biaya = parsing HTML/CSS di CPU 4×). **Aturan:** animasi `opacity` hanya untuk
+  bagian DI BAWAH layar (`SectionReveal`), jangan untuk konten di atas layar.
+- **PWA:**
+  - `src/app/manifest.ts` (`dynamic = "force-static"`) — name, `start_url`,
+    `scope`, `display: standalone`, `theme_color`, + 3 ikon; semua via `withBase`.
+  - Ikon: `public/icons/{icon-192,icon-512,maskable-512}.png` + `src/app/apple-icon.png`
+    dibuat oleh **`npm run icons`** (`scripts/make-icons.mjs`) dari SATU sumber
+    `icon.svg` (skrip `make-apple-icon.mjs` lama digantikan).
+  - `public/sw.js` — service worker **tulisan sendiri, tanpa dependency**:
+    navigasi network-first (fallback cache/halaman offline), aset statis
+    cache-first, **audio TIDAK di-cache** (respons 206/Range tak bisa disimpan
+    Cache API). Ada `VERSION` untuk membuang cache lama.
+  - `src/components/ServiceWorkerRegister.tsx` — daftar SW **hanya produksi** dan
+    setelah `load`, supaya tidak berebut bandwidth dengan render awal.
+  - `appleWebApp` di metadata (iOS Home Screen).
+  - Diuji: SW aktif & mengontrol halaman; **server dimatikan → halaman tetap
+    terbuka penuh dari cache** (`servedBySW: true`, `transferSize: 0`).

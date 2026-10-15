@@ -48,6 +48,12 @@ export const metadata: Metadata = {
     title: "Untuk Kamu",
     description: "Sebuah halaman kecil yang dibuat khusus untuk seseorang yang spesial.",
   },
+  // iOS: biar terasa seperti app saat ditambahkan ke Home Screen.
+  appleWebApp: {
+    capable: true,
+    title: "Untuk Kamu",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 // ---------------------------------------------------------------------------
