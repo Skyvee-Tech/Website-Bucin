@@ -2,6 +2,7 @@ import AudioProvider from "@/components/AudioProvider";
 import OpenGate from "@/components/OpenGate";
 import FloatingControls from "@/components/FloatingControls";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import InstallHint from "@/components/InstallHint";
 import Hero from "@/components/Hero";
 import WordMarquee from "@/components/WordMarquee";
 import Countdown from "@/components/Countdown";
@@ -36,6 +37,8 @@ export default function Home() {
       <FloatingControls />
       {/* Daftarkan service worker (PWA) — hanya produksi, setelah load. */}
       <ServiceWorkerRegister />
+      {/* Ajakan "pasang ke layar utama" — muncul setelah gerbang dibuka. */}
+      <InstallHint />
     </AudioProvider>
   );
 }
