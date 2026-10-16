@@ -292,6 +292,26 @@ Konten personal hanya ada di `src/content/site.ts`.
   Catatan penting: sisa "jank" kadang muncul **justru tanpa ganti tema** (kontrol
   tanpa toggle sempat 200 ms long task) — itu dari animasi dekoratif yang berjalan
   terus (hati melayang & marquee), bukan dari ganti tema.
+- **Fade tema singkat HANYA desktop** (lebih dari 768 px): `body` diberi transisi
+  160 ms di dalam `@media (min-width: 768px) and (prefers-reduced-motion:
+  no-preference)`. Di HP tidak ada transisi (terukur paling berat di sana).
+
+## Animasi berhenti saat tidak terlihat
+
+- `src/lib/useActiveMotion.ts` — `active` = elemen ada di viewport
+  (IntersectionObserver, margin 150 px) **dan** tab terlihat
+  (`visibilitychange` via `useSyncExternalStore`, snapshot server `true`).
+- Dipakai untuk menghentikan kerja yang tak terlihat:
+  - `FloatingHearts`: partikel **di-unmount** saat keluar viewport (aman, karena
+    animasinya mulai dari bawah = di luar layar).
+  - `Countdown`: **interval 1 detik berhenti** saat di luar viewport (angka beku,
+    dihitung ulang saat kembali) — ini kerja JS yang sebelumnya jalan selamanya.
+  - `Hero`, `Divider`, `LoveLetter`: denyut hati berhenti saat tidak terlihat.
+  - `WordMarquee`: jeda **hanya saat tab disembunyikan** — kalau dihentikan saat
+    keluar layar, tinggi berubah & posisi teks melompat (CLS).
+- Terverifikasi: partikel 18 → **0** saat digulir jauh → 18 lagi saat naik;
+  penghitung **beku** (22→22) saat di luar layar dan **berdetak** (19→22, 47→50)
+  saat terlihat; transisi `body` = `0s` di HP dan `0.16s` di desktop.
 - **Focus ring keyboard**:
   `:where(a, button, input, select, textarea):focus-visible` → outline 2px warna
   primary. Spesifisitas rendah supaya komponen bisa menimpa bila perlu.

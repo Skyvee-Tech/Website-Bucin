@@ -2,6 +2,7 @@
 
 import { motion, type Variants } from "motion/react";
 import { site } from "@/content/site";
+import { useActiveMotion } from "@/lib/useActiveMotion";
 import FloatingHearts from "./FloatingHearts";
 
 // ---------------------------------------------------------------------------
@@ -22,8 +23,11 @@ const item: Variants = {
 };
 
 export default function Hero() {
+  // Denyut hati berhenti saat hero tidak terlihat.
+  const { ref, active } = useActiveMotion<HTMLElement>();
   return (
     <section
+      ref={ref}
       className="relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden px-6"
       style={{
         paddingTop: "calc(2rem + env(safe-area-inset-top))",
@@ -47,7 +51,7 @@ export default function Hero() {
           <motion.svg
             viewBox="0 0 24 24"
             className="h-7 w-7"
-            animate={{ scale: [1, 1.15, 1] }}
+            animate={active ? { scale: [1, 1.15, 1] } : undefined}
             transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
           >
             <path

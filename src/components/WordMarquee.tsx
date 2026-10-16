@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { usePageVisible } from "@/lib/useActiveMotion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 // ---------------------------------------------------------------------------
@@ -22,13 +23,16 @@ function HeartDot() {
 
 export default function WordMarquee({ words }: { words: string[] }) {
   const reduce = useReducedMotionSafe();
+  // Hanya jeda saat TAB disembunyikan — kalau di-unmount/hentikan saat keluar
+  // layar, tinggi berubah & posisi teks melompat (bikin bergeser/kelihatan).
+  const visible = usePageVisible();
   const loop = [...words, ...words];
 
   return (
     <div className="w-full overflow-hidden py-6" aria-hidden="true">
       <motion.div
         className="flex w-max items-center gap-8 pr-8"
-        animate={reduce ? undefined : { x: ["0%", "-50%"] }}
+        animate={reduce || !visible ? undefined : { x: ["0%", "-50%"] }}
         transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
       >
         {loop.map((word, i) => (

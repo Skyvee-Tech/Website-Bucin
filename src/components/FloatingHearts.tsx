@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useActiveMotion } from "@/lib/useActiveMotion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 // ---------------------------------------------------------------------------
@@ -59,14 +60,18 @@ function HeartIcon({ className }: { className?: string }) {
 
 export default function FloatingHearts() {
   const reduce = useReducedMotionSafe();
+  // Berhenti total saat tidak terlihat (di luar viewport / tab disembunyikan).
+  const { ref, active } = useActiveMotion<HTMLDivElement>();
   if (reduce) return null;
 
   return (
     <div
+      ref={ref}
       className="pointer-events-none absolute inset-0 overflow-hidden"
       aria-hidden="true"
     >
-      {PARTICLES.map((p, i) => (
+      {active &&
+        PARTICLES.map((p, i) => (
         <motion.span
           key={i}
           className={`absolute ${p.mobileVisible ? "" : "hidden sm:block"}`}

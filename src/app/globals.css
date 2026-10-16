@@ -168,6 +168,18 @@ h3 {
    animasi berarti paint ulang seluruh viewport. Karena itu tema diganti
    seketika (tanpa transisi) — paling ringan & paling mulus di HP lemah. */
 
+/* Fade singkat saat ganti tema — HANYA di layar lebar (desktop/laptop).
+   Di HP sengaja TIDAK ada transisi: background `body` adalah gradien seluas
+   layar, jadi tiap frame animasi = paint ulang viewport (terukur 55-258 ms long
+   task di CPU 6x), sementara tanpa transisi = 0. */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  body {
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+}
+
 /* Hormati pengguna yang mematikan animasi gerak (aksesibilitas). */
 @media (prefers-reduced-motion: reduce) {
   *,

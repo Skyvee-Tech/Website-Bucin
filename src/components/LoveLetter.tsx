@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, type Variants } from "motion/react";
 import { site } from "@/content/site";
+import { useActiveMotion } from "@/lib/useActiveMotion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import SectionReveal from "./SectionReveal";
 
@@ -30,6 +31,8 @@ export default function LoveLetter() {
   const ref = useRef<HTMLDivElement | null>(null);
   const inView = useInView(ref, { once: true, amount: 0.3 });
   const reduce = useReducedMotionSafe();
+  // Denyut hati berhenti saat section ini tidak terlihat.
+  const { ref: sectionRef, active } = useActiveMotion<HTMLElement>();
 
   const full = site.letter;
   const [count, setCount] = useState(0);
@@ -51,7 +54,11 @@ export default function LoveLetter() {
   const visibleText = finished ? full : full.slice(0, count);
 
   return (
-    <section id="surat" className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8">
+    <section
+      ref={sectionRef}
+      id="surat"
+      className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8"
+    >
       <SectionReveal>
         <p className="text-center text-xs uppercase tracking-[0.35em] text-accent">
           Sepenuh hati
@@ -138,7 +145,7 @@ export default function LoveLetter() {
           <motion.div
             aria-hidden="true"
             className="mx-auto mb-6 mt-12 h-10 w-10 text-secondary"
-            animate={reduce ? undefined : { scale: [1, 1.12, 1] }}
+            animate={reduce || !active ? undefined : { scale: [1, 1.12, 1] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
           >
             <svg viewBox="0 0 24 24" className="h-full w-full">

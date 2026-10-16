@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useActiveMotion } from "@/lib/useActiveMotion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 // ---------------------------------------------------------------------------
@@ -20,9 +21,12 @@ function Heart() {
 
 export default function Divider() {
   const reduce = useReducedMotionSafe();
+  // Hentikan denyut hati saat pembatasnya tidak terlihat.
+  const { ref, active } = useActiveMotion<HTMLDivElement>();
 
   return (
     <div
+      ref={ref}
       className="mx-auto flex w-full max-w-xs items-center justify-center gap-3 py-6"
       aria-hidden="true"
     >
@@ -36,7 +40,7 @@ export default function Divider() {
       />
       <motion.span
         className="shrink-0"
-        animate={reduce ? undefined : { scale: [1, 1.25, 1] }}
+        animate={reduce || !active ? undefined : { scale: [1, 1.25, 1] }}
         transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
       >
         <Heart />

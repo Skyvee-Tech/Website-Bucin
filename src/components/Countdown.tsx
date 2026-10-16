@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getElapsed, type Elapsed } from "@/lib/date";
 import { site } from "@/content/site";
+import { useActiveMotion } from "@/lib/useActiveMotion";
 import SectionReveal from "./SectionReveal";
 
 // ---------------------------------------------------------------------------
@@ -27,17 +28,22 @@ function Stat({ label, value }: { label: string; value: number | null }) {
 
 export default function Countdown() {
   const [elapsed, setElapsed] = useState<Elapsed | null>(null);
+  // Interval 1 detik hanya berjalan saat penghitung terlihat — hemat CPU di HP
+  // lemah; angkanya dihitung ulang begitu kembali terlihat.
+  const { ref, active } = useActiveMotion<HTMLElement>();
 
   useEffect(() => {
+    if (!active) return;
     const update = () => setElapsed(getElapsed(site.startDate));
     // Hitung langsung setelah mount, lalu berdetak tiap detik.
     update();
     const id = window.setInterval(update, 1000);
     return () => window.clearInterval(id);
-  }, []);
+  }, [active]);
 
   return (
     <section
+      ref={ref}
       id="penghitung"
       className="mx-auto w-full max-w-2xl px-5 py-20 text-center sm:px-8"
     >
