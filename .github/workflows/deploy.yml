@@ -6,7 +6,9 @@
 #   2. Build website statis (folder `out`)
 #   3. Meng-upload hasilnya dan menayangkannya di GitHub Pages
 #
-# Setelah push pertama, ubah: Settings > Pages > Source = "GitHub Actions".
+# Pages diaktifkan otomatis oleh workflow (lihat `enablement: true`), jadi tidak
+# perlu menyetel Source secara manual. Kalau Pages sedang nonaktif (mis. repo
+# pernah dibuat private), workflow akan mengaktifkannya lagi lalu deploy.
 name: Deploy ke GitHub Pages
 
 on:
@@ -51,6 +53,11 @@ jobs:
 
       - name: Siapkan GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          # Aktifkan Pages otomatis kalau belum aktif. Penting: saat repo dibuat
+          # private (paket Free) Pages di-unpublish, dan kembali ke public TIDAK
+          # mengaktifkannya lagi — tanpa ini langkah ini gagal.
+          enablement: true
 
       - name: Upload hasil build (folder out)
         uses: actions/upload-pages-artifact@v3
