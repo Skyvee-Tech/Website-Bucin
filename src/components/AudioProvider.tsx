@@ -62,6 +62,8 @@ export default function AudioProvider({
   // Ref untuk dibaca di dalam efek tanpa memicu dependensi ulang.
   const startedRef = useRef(false);
   const playingRef = useRef(false);
+  // Penanda "lanjutkan putar" saat lagu habis sendiri (event `ended`).
+  const keepPlayingRef = useRef(false);
 
   const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -149,6 +151,9 @@ export default function AudioProvider({
 
   const onEnded = useCallback(() => {
     if (total > 1) {
+      // Ketika lagu habis, browser TURUT memicu `pause` (playing jadi false),
+      // jadi tandai supaya efek ganti-lagu tetap memutar lagu berikutnya.
+      keepPlayingRef.current = true;
       setIndex((i) => (i + 1) % total);
       setCurrentTime(0);
       setDuration(0);
@@ -163,12 +168,15 @@ export default function AudioProvider({
     playingRef.current = playing;
   }, [playing]);
 
-  // Ganti lagu: mulai dari awal, lanjut putar kalau sebelumnya berjalan.
+  // Ganti lagu: mulai dari awal, lalu putar kalau sebelumnya sedang berjalan
+  // ATAU lagu sebelumnya habis sendiri (auto-advance).
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
     audio.currentTime = 0;
-    if (startedRef.current && playingRef.current) {
+    const keepPlaying = keepPlayingRef.current;
+    keepPlayingRef.current = false;
+    if (keepPlaying || (startedRef.current && playingRef.current)) {
       const p = audio.play();
       if (p) p.catch(() => {});
     }

@@ -278,6 +278,11 @@ Konten personal hanya ada di `src/content/site.ts`.
   "Harvey", TPE1 "Her's") ditulis ulang lewat skrip Node (tanpa ffmpeg).
 - Panel pemutar: kalau sebuah mp3 tidak punya judul, tampil "Tanpa judul"
   (bukan "Memuat…" selamanya).
+- **Perbaikan auto-advance:** saat lagu habis, browser TURUT memicu event `pause`
+  (sehingga `playing=false`) → lagu berikutnya ikut berhenti. Ditambahkan
+  `keepPlayingRef`: event `ended` menandai "lanjutkan putar", lalu efek ganti-lagu
+  memutar lagu berikutnya. Terverifikasi: lompat ke akhir lagu kedua → otomatis
+  pindah ke lagu pertama **dan tetap diputar** (waktu terus berjalan).
   - **Hasil LCP di situs live:** 390 px, CPU 4×, Slow 4G → **904 ms** (dari
     **2.889 ms** sebelumnya), CLS **0,00**.
 
