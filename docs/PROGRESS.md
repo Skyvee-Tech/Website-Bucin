@@ -266,6 +266,18 @@ Konten personal hanya ada di `src/content/site.ts`.
   - `appleWebApp` di metadata (iOS Home Screen).
   - Diuji: SW aktif & mengontrol halaman; **server dimatikan → halaman tetap
     terbuka penuh dari cache** (`servedBySW: true`, `transferSize: 0`).
+
+## Daftar lagu (playlist)
+
+- `site.playlist` → `["/music/lagu.mp3", "/music/lagu-2.mp3"]`. Begitu ada >1 lagu,
+  tombol **prev/next otomatis aktif** dan `loop` dimatikan (lagu lanjut sendiri
+  saat habis). Terverifikasi: **next** → "Harvey / Her's" (`lagu-2.mp3`) sambil
+  tetap diputar, **prev** → kembali ke "Brooklyn Baby".
+- `lagu-2.mp3` (8,06 MB) dari `Her's - Harvey (Official Audio).mp3`. File sumber
+  TIDAK punya tag judul/artis dan tanpa cover, jadi tag **ID3v2.3** (TIT2
+  "Harvey", TPE1 "Her's") ditulis ulang lewat skrip Node (tanpa ffmpeg).
+- Panel pemutar: kalau sebuah mp3 tidak punya judul, tampil "Tanpa judul"
+  (bukan "Memuat…" selamanya).
   - **Hasil LCP di situs live:** 390 px, CPU 4×, Slow 4G → **904 ms** (dari
     **2.889 ms** sebelumnya), CLS **0,00**.
 

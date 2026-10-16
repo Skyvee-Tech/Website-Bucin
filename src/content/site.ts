@@ -171,7 +171,7 @@ export const site: SiteContent = {
 
   // Daftar lagu latar (file .mp3 di public/music/). Tambah entri baru kalau
   // mau lebih dari satu lagu — tombol maju/mundur otomatis aktif.
-  playlist: ["/music/lagu.mp3"],
+  playlist: ["/music/lagu.mp3", "/music/lagu-2.mp3"],
 };
 
 export default site;

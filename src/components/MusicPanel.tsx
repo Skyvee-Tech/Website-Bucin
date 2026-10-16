@@ -88,7 +88,7 @@ export default function MusicPanel({ open }: { open: boolean }) {
             </div>
             <div className="min-w-0">
               <p className="truncate font-heading text-sm text-primary">
-                {meta?.title ?? "Memuat…"}
+                {meta ? (meta.title ?? "Tanpa judul") : "Memuat…"}
               </p>
               <p className="truncate text-xs text-foreground/70">
                 {meta?.artist ?? ""}
