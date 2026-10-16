@@ -54,6 +54,11 @@ export const metadata: Metadata = {
     title: "Untuk Kamu",
     statusBarStyle: "black-translucent",
   },
+  // Next hanya menulis "mobile-web-app-capable"; iOS Safari masih membaca nama
+  // "apple-mobile-web-app-capable" untuk membuka tanpa UI Safari (standalone).
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
 };
 
 // ---------------------------------------------------------------------------
