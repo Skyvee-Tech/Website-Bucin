@@ -312,6 +312,19 @@ Konten personal hanya ada di `src/content/site.ts`.
 - Terverifikasi: partikel 18 → **0** saat digulir jauh → 18 lagi saat naik;
   penghitung **beku** (22→22) saat di luar layar dan **berdetak** (19→22, 47→50)
   saat terlihat; transisi `body` = `0s` di HP dan `0.16s` di desktop.
+- **Jumlah hati diperbanyak** atas permintaan user: `TOTAL` 18 → **32** dan yang
+  tampil di HP (`MOBILE_VISIBLE`) 6 → **12** (desktop tetap 32).
+
+## Uji menyeluruh (regresi) setelah perubahan
+
+Dijalankan pada **build produksi** (dilayani statis) di viewport 390 px + 3 lebar lain:
+lint bersih, `npm test` lolos, `npm run build` PASS, lalu di browser:
+gerbang terbuka, tema gelap→terang **tersimpan setelah reload**, penghitung
+**berdetak**, player: 2 lagu (Brooklyn Baby ↔ Harvey/Her's), tombol prev/next
+**aktif**, tombol play/pause ada, progress `--p` terisi; lightbox galeri terbuka
+& tertutup dengan `Esc` (scroll badan dikunci lalu pulih); hint instal muncul;
+service worker aktif; **console 0 pesan**; tanpa scroll horizontal di
+360/390/768/1280 dan tombol tetap 48×48 di dalam viewport.
 - **Focus ring keyboard**:
   `:where(a, button, input, select, textarea):focus-visible` → outline 2px warna
   primary. Spesifisitas rendah supaya komponen bisa menimpa bila perlu.

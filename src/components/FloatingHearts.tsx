@@ -34,8 +34,8 @@ function bulat(n: number, desimal = 2): number {
   return Number(n.toFixed(desimal));
 }
 
-const MOBILE_VISIBLE = 6; // jumlah partikel di layar kecil
-const TOTAL = 18; // jumlah partikel di layar besar
+const MOBILE_VISIBLE = 12; // jumlah partikel di layar kecil
+const TOTAL = 32; // jumlah partikel di layar besar
 
 // Dibuat sekali di level modul (bukan saat render).
 const PARTICLES = Array.from({ length: TOTAL }, (_, i) => ({
