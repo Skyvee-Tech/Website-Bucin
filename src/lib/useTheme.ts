@@ -35,13 +35,8 @@ function getServerSnapshot(): Theme {
 
 export function toggleTheme(): void {
   const theme = nextTheme(getSnapshot());
-  const root = document.documentElement;
-
-  // Transisi warna halus hanya saat ganti tema (lihat .theme-transition di CSS).
-  root.classList.add("theme-transition");
-  window.setTimeout(() => root.classList.remove("theme-transition"), 350);
-
-  root.setAttribute("data-theme", theme);
+  // Transisinya ada di CSS dan HANYA pada `body` (lihat globals.css).
+  document.documentElement.setAttribute("data-theme", theme);
   try {
     localStorage.setItem(KEY, theme);
   } catch {

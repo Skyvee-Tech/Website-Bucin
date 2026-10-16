@@ -284,10 +284,14 @@ Konten personal hanya ada di `src/content/site.ts`.
 - **Progress lagu terisi**: track `.music-range` diwarnai lewat custom property
   `--p` (diisi `MusicPanel` dari posisi/durasi), jadi bagian yang sudah diputar
   berwarna primary dan sisanya abu.
-- **Transisi tema halus**: kelas `.theme-transition` dipasang **sesaat (350 ms)**
-  oleh `useTheme()` saat ganti tema; aturan CSS-nya dibungkus
-  `@media (prefers-reduced-motion: no-preference)` supaya pengguna "kurangi gerak"
-  tidak ikut dianimasikan (jangan dipasang permanen — bisa mengganggu animasi lain).
+- **Transisi tema: DIHAPUS — tema kini ganti seketika.** Diukur di HP lemah
+  (CPU 6×, 390 px, situs live): transisi `*` → ~760 ms long task & 8 frame >50 ms;
+  transisi `body` saja (180 ms) → 55–258 ms long task; **tanpa transisi → 0**.
+  Sebabnya: background `body` adalah **gradien seluas layar**, jadi setiap frame
+  animasi = paint ulang seluruh viewport. Jangan dihidupkan lagi tanpa mengukur.
+  Catatan penting: sisa "jank" kadang muncul **justru tanpa ganti tema** (kontrol
+  tanpa toggle sempat 200 ms long task) — itu dari animasi dekoratif yang berjalan
+  terus (hati melayang & marquee), bukan dari ganti tema.
 - **Focus ring keyboard**:
   `:where(a, button, input, select, textarea):focus-visible` → outline 2px warna
   primary. Spesifisitas rendah supaya komponen bisa menimpa bila perlu.

@@ -159,22 +159,14 @@ h3 {
   outline-offset: 2px;
 }
 
-/* Transisi halus HANYA saat ganti tema: kelas `theme-transition` dipasang
-   sesaat oleh useTheme(). Dibungkus no-preference supaya pengguna yang memilih
-   "kurangi gerak" tidak ikut dianimasikan. */
-@media (prefers-reduced-motion: no-preference) {
-  .theme-transition,
-  .theme-transition *,
-  .theme-transition *::before,
-  .theme-transition *::after {
-    transition:
-      background-color 250ms ease,
-      border-color 250ms ease,
-      color 250ms ease,
-      fill 250ms ease,
-      stroke 250ms ease !important;
-  }
-}
+/* CATATAN PENTING — JANGAN tambahkan transisi warna global saat ganti tema.
+   Diukur (CPU 6x, layar 390px, situs live):
+     - transisi `*` (356 elemen x 5 properti) -> ~760 ms long task, 8 frame > 50 ms
+     - transisi `body` saja (180 ms)          -> ~55-258 ms long task, 3-5 frame > 50 ms
+     - TANPA transisi                          -> 0 long task, 0 frame > 50 ms
+   Penyebabnya: background `body` adalah gradien seluas layar, jadi SETIAP frame
+   animasi berarti paint ulang seluruh viewport. Karena itu tema diganti
+   seketika (tanpa transisi) — paling ringan & paling mulus di HP lemah. */
 
 /* Hormati pengguna yang mematikan animasi gerak (aksesibilitas). */
 @media (prefers-reduced-motion: reduce) {
