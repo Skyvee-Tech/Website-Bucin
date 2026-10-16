@@ -92,7 +92,12 @@ html[data-theme="dark"] {
 .music-range::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 9999px;
-  background: var(--color-border);
+  /* Bagian yang sudah/lagi diputar diwarnai; sisanya abu. `--p` diisi komponen. */
+  background: linear-gradient(
+    to right,
+    var(--color-primary) 0 var(--p, 0%),
+    var(--color-border) var(--p, 0%) 100%
+  );
 }
 .music-range::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -106,7 +111,11 @@ html[data-theme="dark"] {
 .music-range::-moz-range-track {
   height: 4px;
   border-radius: 9999px;
-  background: var(--color-border);
+  background: linear-gradient(
+    to right,
+    var(--color-primary) 0 var(--p, 0%),
+    var(--color-border) var(--p, 0%) 100%
+  );
 }
 .music-range::-moz-range-thumb {
   width: 16px;
@@ -141,6 +150,30 @@ h2,
 h3 {
   font-family: var(--font-heading), Georgia, serif;
   line-height: 1.15;
+}
+
+/* Fokus keyboard yang terlihat (aksesibilitas). Spesifisitas rendah supaya
+   komponen tetap bisa menimpanya bila perlu. */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Transisi halus HANYA saat ganti tema: kelas `theme-transition` dipasang
+   sesaat oleh useTheme(). Dibungkus no-preference supaya pengguna yang memilih
+   "kurangi gerak" tidak ikut dianimasikan. */
+@media (prefers-reduced-motion: no-preference) {
+  .theme-transition,
+  .theme-transition *,
+  .theme-transition *::before,
+  .theme-transition *::after {
+    transition:
+      background-color 250ms ease,
+      border-color 250ms ease,
+      color 250ms ease,
+      fill 250ms ease,
+      stroke 250ms ease !important;
+  }
 }
 
 /* Hormati pengguna yang mematikan animasi gerak (aksesibilitas). */

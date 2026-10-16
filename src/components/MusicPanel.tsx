@@ -113,6 +113,12 @@ export default function MusicPanel({ open }: { open: boolean }) {
             onBlur={commitSeek}
             aria-label="Posisi lagu"
             className="music-range mt-2 w-full"
+            // `--p` dipakai track CSS untuk mewarnai bagian yang sudah dilewati.
+            style={
+              {
+                "--p": `${max > 0 ? Math.round(Math.min(100, (shown / max) * 100) * 10) / 10 : 0}%`,
+              } as React.CSSProperties
+            }
           />
           <div className="flex justify-between text-[0.65rem] tabular-nums text-foreground/60">
             <span>{formatTime(shown)}</span>

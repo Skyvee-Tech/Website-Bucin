@@ -278,6 +278,23 @@ Konten personal hanya ada di `src/content/site.ts`.
   "Harvey", TPE1 "Her's") ditulis ulang lewat skrip Node (tanpa ffmpeg).
 - Panel pemutar: kalau sebuah mp3 tidak punya judul, tampil "Tanpa judul"
   (bukan "Memuat…" selamanya).
+
+## Polish UI: progress lagu, transisi tema, focus ring
+
+- **Progress lagu terisi**: track `.music-range` diwarnai lewat custom property
+  `--p` (diisi `MusicPanel` dari posisi/durasi), jadi bagian yang sudah diputar
+  berwarna primary dan sisanya abu.
+- **Transisi tema halus**: kelas `.theme-transition` dipasang **sesaat (350 ms)**
+  oleh `useTheme()` saat ganti tema; aturan CSS-nya dibungkus
+  `@media (prefers-reduced-motion: no-preference)` supaya pengguna "kurangi gerak"
+  tidak ikut dianimasikan (jangan dipasang permanen — bisa mengganggu animasi lain).
+- **Focus ring keyboard**:
+  `:where(a, button, input, select, textarea):focus-visible` → outline 2px warna
+  primary. Spesifisitas rendah supaya komponen bisa menimpa bila perlu.
+- **JEBAKAN (terulang):** setelah mengubah `globals.css`, **build produksi bisa
+  mengeluarkan CSS BASI dari cache Turbopack** — aturan baru tidak muncul walau
+  build "PASS". Kalau perubahan CSS tidak terlihat: **hapus `.next` lalu build
+  ulang**, dan pastikan aturannya benar-benar ada di `out/_next/static/chunks/*.css`.
 - **Perbaikan auto-advance:** saat lagu habis, browser TURUT memicu event `pause`
   (sehingga `playing=false`) → lagu berikutnya ikut berhenti. Ditambahkan
   `keepPlayingRef`: event `ended` menandai "lanjutkan putar", lalu efek ganti-lagu
