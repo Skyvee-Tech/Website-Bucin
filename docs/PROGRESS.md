@@ -266,3 +266,24 @@ Konten personal hanya ada di `src/content/site.ts`.
   - `appleWebApp` di metadata (iOS Home Screen).
   - Diuji: SW aktif & mengontrol halaman; **server dimatikan → halaman tetap
     terbuka penuh dari cache** (`servedBySW: true`, `transferSize: 0`).
+  - **Hasil LCP di situs live:** 390 px, CPU 4×, Slow 4G → **904 ms** (dari
+    **2.889 ms** sebelumnya), CLS **0,00**.
+
+## PENTING: deploy mati setelah repo sempat dibuat private
+
+- Saat repo diubah ke **private** (paket Free), GitHub **meng-unpublish** GitHub
+  Pages. Beralih kembali ke **public TIDAK** mengaktifkannya lagi, sehingga
+  workflow gagal di langkah `actions/configure-pages` dengan
+  **`HttpError: Resource not accessible by integration`** (panggilan `POST /pages`),
+  dan `GET /repos/.../pages` menjawab **404**. Job `build` lain (install/build)
+  tetap sukses — yang gagal hanya langkah Pages.
+- **Perbaikan:** aktifkan Pages lagi. Lewat UI:
+  **Settings → Pages → Build and deployment → Source = "GitHub Actions"**.
+  Atau lewat API (butuh token dengan izin Pages/admin):
+  `POST /repos/<owner>/<repo>/pages` dengan body `{"build_type":"workflow"}`.
+  Setelah aktif, **jalankan ulang workflow** (Actions → run → Re-run) — tidak
+  perlu push baru.
+- `deploy.yml` sudah diberi `enablement: true` pada `configure-pages`, tetapi itu
+  **tidak cukup** untuk kasus ini (token workflow tidak boleh membuat situs
+  Pages). Artinya: **kalau repo dibuat private lagi, Pages harus diaktifkan ulang
+  secara manual.**
